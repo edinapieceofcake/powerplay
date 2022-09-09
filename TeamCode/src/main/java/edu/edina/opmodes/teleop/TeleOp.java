@@ -26,6 +26,9 @@ public class TeleOp extends OpMode {
         _gamepad1.update();
         _gamepad2.update();
 
+        robot.drive.setVelocity(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad2.right_stick_y
+        );
+
         // set things into the robot from the gamepad or other sensors
 
         telemetry.update();
