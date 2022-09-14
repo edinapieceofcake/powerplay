@@ -1,5 +1,6 @@
 package edu.edina.opmodes.teleop;
 
+import edu.edina.library.subsystems.MecanumDrive;
 import edu.edina.library.subsystems.Subsystem;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ThreadPool;
@@ -17,6 +18,8 @@ public class Robot {
     private List<Subsystem> subsystems;
 
     private Telemetry telemetry;
+
+    public MecanumDrive drive;
 
     private Runnable subsystemUpdateRunnable = () -> {
         while (!Thread.currentThread().isInterrupted()) {
@@ -43,6 +46,8 @@ public class Robot {
         subsystems = new ArrayList<>();
 
         try {
+            drive = new MecanumDrive(opMode.hardwareMap);
+            subsystems.add(drive);
         } catch (IllegalArgumentException e) {
 
         }
