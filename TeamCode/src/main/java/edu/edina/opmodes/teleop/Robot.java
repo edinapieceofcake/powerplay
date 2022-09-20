@@ -19,6 +19,7 @@ public class Robot {
     private List<Subsystem> subsystems;
 
     private Telemetry telemetry;
+    public MecanumDrive drive;
 
     public MecanumDrive drive;
 
@@ -47,11 +48,16 @@ public class Robot {
         subsystems = new ArrayList<>();
 
         try {
+<<<<<<< HEAD
 
             drive = new MecanumDrive(opMode.hardwareMap);
 
             subsystems.add(drive);
 
+=======
+            drive = new MecanumDrive(opMode.hardwareMap);
+            subsystems.add(drive);
+>>>>>>> feature/AJ
         } catch (IllegalArgumentException e) {
 
         }
