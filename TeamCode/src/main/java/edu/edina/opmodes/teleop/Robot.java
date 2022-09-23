@@ -1,9 +1,11 @@
 package edu.edina.opmodes.teleop;
 
+import edu.edina.library.subsystems.Lift;
 import edu.edina.library.subsystems.MecanumDrive;
 import edu.edina.library.subsystems.Subsystem;
+import edu.edina.library.subsystems.Intake;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ThreadPool;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public class Robot {
+
     private ExecutorService subsystemUpdateExecutor;
     private boolean started;
 
@@ -20,6 +23,9 @@ public class Robot {
 
     private Telemetry telemetry;
     public MecanumDrive drive;
+    public Lift lift;
+    public Intake intake;
+
 
     private Runnable subsystemUpdateRunnable = () -> {
         while (!Thread.currentThread().isInterrupted()) {
@@ -51,6 +57,20 @@ public class Robot {
         } catch (IllegalArgumentException e) {
 
         }
+        try {
+
+            lift = new Lift(opMode.hardwareMap);
+            subsystems.add(lift);
+        } catch (IllegalArgumentException e){
+
+        } try {
+            intake = new Intake(opMode.hardwareMap);
+            subsystems.add(intake);
+        } catch (IllegalArgumentException e){
+
+        }
+
+
 
         subsystemUpdateExecutor = ThreadPool.newSingleThreadExecutor("subsystem update");
     }
