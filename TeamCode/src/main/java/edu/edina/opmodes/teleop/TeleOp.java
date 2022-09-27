@@ -10,6 +10,7 @@ public class TeleOp extends OpMode {
     private Stickygamepad _gamepad1;
     private Stickygamepad _gamepad2;
 
+
     public void init() {
         _gamepad1 = new Stickygamepad(gamepad1);
         _gamepad2 = new Stickygamepad(gamepad2);
