@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 @TeleOp(name = "ServoTest")
 
-public class ServoTmest extends OpMode {
+public class ServoTest extends OpMode {
 
     private CRServo leftServo;
     private CRServo rightServo;
