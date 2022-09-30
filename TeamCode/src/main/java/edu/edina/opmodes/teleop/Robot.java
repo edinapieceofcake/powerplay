@@ -24,6 +24,7 @@ public class Robot {
     public MecanumDrive drive;
     public Lift lift;
     public Intake intake;
+    public RobotState RobotState = edu.edina.opmodes.teleop.RobotState.Idle;
 
 
 
@@ -68,7 +69,7 @@ public class Robot {
 
         }
         try {
-            intake = new Intake(opMode.hardwareMap);
+            intake = new Intake(opMode.hardwareMap, this);
             subsystems.add(intake);
         } catch (IllegalArgumentException e){
 
