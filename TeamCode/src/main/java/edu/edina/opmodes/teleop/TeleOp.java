@@ -18,6 +18,7 @@ public class TeleOp extends OpMode {
         robot = new Robot(this, telemetry);
         robot.start();
     }
+    /* Just testing, ignoor// */
 
     @Override
     public void start() {
