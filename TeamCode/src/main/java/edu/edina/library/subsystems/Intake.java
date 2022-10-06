@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import edu.edina.opmodes.teleop.Robot;
 import edu.edina.opmodes.teleop.RobotState;
 
-public class Intake extends Subsystem
+public class Intake extends Subsystem {
     private DcMotorEx rightmotor;
     private DcMotorEx leftmotor;
     private DcMotorEx flipmotor;
@@ -16,6 +16,7 @@ public class Intake extends Subsystem
     private CRServo intakeservo;
     private Robot robot;
     private double intakespeed;
+
 
     public Intake(HardwareMap map, Robot robot){
         rightmotor = map.get(DcMotorEx.class, "rightmotor");
@@ -36,6 +37,7 @@ public class Intake extends Subsystem
                 rightmotor.setPower(0);
                 leftmotor.setPower(0);
             }
+        }
     }
 
     public void SetSpeed(double lefttrigger, double righttrigger){
