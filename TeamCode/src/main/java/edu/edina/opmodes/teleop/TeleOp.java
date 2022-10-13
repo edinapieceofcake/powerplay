@@ -10,6 +10,7 @@ public class TeleOp extends OpMode {
     private Stickygamepad _gamepad1;
     private Stickygamepad _gamepad2;
 
+
     public void init() {
         _gamepad1 = new Stickygamepad(gamepad1);
         _gamepad2 = new Stickygamepad(gamepad2);
@@ -26,10 +27,18 @@ public class TeleOp extends OpMode {
         _gamepad1.update();
         _gamepad2.update();
 
+
+        robot.drive.setVelocity(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad2.right_stick_y
+        );
+
+
         // set things into the robot from the gamepad or other sensors
         robot.drive.setVelocity(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_y);
 
         telemetry.update();
+        robot.drive.setVelocity(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_y);
+        robot.lift.SetSpeed(gamepad2.right_stick_y);
+
     }
 
     @Override
