@@ -4,6 +4,8 @@ import edu.edina.library.subsystems.Intake;
 import edu.edina.library.subsystems.Lift;
 import edu.edina.library.subsystems.MecanumDrive;
 import edu.edina.library.subsystems.Subsystem;
+import edu.edina.library.util.RobotState;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ThreadPool;
@@ -24,9 +26,7 @@ public class Robot {
     public MecanumDrive drive;
     public Lift lift;
     public Intake intake;
-    public RobotState RobotState = edu.edina.opmodes.teleop.RobotState.Idle;
-
-
+    public RobotState robotState = new RobotState();
 
     private Runnable subsystemUpdateRunnable = () -> {
         while (!Thread.currentThread().isInterrupted()) {
@@ -53,23 +53,20 @@ public class Robot {
         subsystems = new ArrayList<>();
 
         try {
-
-
-            drive = new MecanumDrive(opMode.hardwareMap);
-
+            drive = new MecanumDrive(opMode.hardwareMap, robotState);
             subsystems.add(drive);
 
         } catch (IllegalArgumentException e) {
 
         }
         try {
-            lift = new Lift(opMode.hardwareMap);
+            lift = new Lift(opMode.hardwareMap, robotState);
             subsystems.add(lift);
         } catch (IllegalArgumentException e){
 
         }
         try {
-            intake = new Intake(opMode.hardwareMap, this);
+            intake = new Intake(opMode.hardwareMap, robotState);
             subsystems.add(intake);
         } catch (IllegalArgumentException e){
 
@@ -91,5 +88,14 @@ public class Robot {
             subsystemUpdateExecutor = null;
             started = false;
         }
+    }
+
+    public void telemetry()
+    {
+        intake.telemetry(this.telemetry);
+        lift.telemetry(this.telemetry);
+        drive.telemetry(this.telemetry);
+
+        this.telemetry.update();
     }
 }
