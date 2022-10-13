@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import edu.edina.library.util.DriveSpeed;
 import edu.edina.library.util.RobotState;
 
 public class MecanumDrive extends Subsystem{
@@ -18,7 +19,6 @@ public class MecanumDrive extends Subsystem{
     private Motor frontRight;
     private Motor backLeft;
     private Motor backRight;
-    private boolean successfulSetup;
 
     private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
 
@@ -30,9 +30,9 @@ public class MecanumDrive extends Subsystem{
             backRight = new Motor(map, "backRight", Motor.GoBILDA.RPM_312);
 
             drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
-            successfulSetup = true;
+            robotState.DriveSuccessfullySetup = true;
         } catch (Exception ex) {
-            successfulSetup = false;
+            robotState.DriveSuccessfullySetup = false;
         }
 
         this.robotState = robotState;
@@ -40,26 +40,31 @@ public class MecanumDrive extends Subsystem{
 
     @Override
     public void update() {
-        if (successfulSetup) {
+        if (robotState.DriveSuccessfullySetup) {
+            if (robotState.DriveSpeed == DriveSpeed.Fast) {
+                drive.setMaxSpeed(1.3);
+            } else if (robotState.DriveSpeed == DriveSpeed.Low) {
+                drive.setMaxSpeed(0.7);
+            } else {
+                drive.setMaxSpeed(1);
+            }
+
             drive.driveRobotCentric(leftStickX, leftStickY, rightstickY);
         }
     }
 
-    public void setVelocity(double leftStickX, double leftStickY, double rightStickY) {
+    public void setDriveProperties(double leftStickX, double leftStickY, double rightStickY,
+                                   boolean driveSlow, boolean driveMedium, boolean driveFast) {
         this.leftStickX = leftStickX;
         this.leftStickY = leftStickY;
         this.rightstickY = rightStickY;
-    }
 
-    @Override
-    public void telemetry(Telemetry telemetry) {
-        if (successfulSetup) {
-            telemetry.addData("Front Left Position", frontLeft.getCurrentPosition());
-            telemetry.addData("Front Right Position", frontRight.getCurrentPosition());
-            telemetry.addData("Back Left Position", backLeft.getCurrentPosition());
-            telemetry.addData("Back Right Position", backRight.getCurrentPosition());
-        } else {
-            telemetry.addData("MecanumDrive: Unable to setup frontLeft, frontRight, backLeft, backRight motors", "");
+        if (driveSlow) {
+            robotState.DriveSpeed = DriveSpeed.Low;
+        } else if (driveMedium) {
+            robotState.DriveSpeed = DriveSpeed.Medium;
+        } else if (driveFast) {
+            robotState.DriveSpeed = DriveSpeed.Fast;
         }
     }
 }

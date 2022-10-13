@@ -92,10 +92,6 @@ public class Robot {
 
     public void telemetry()
     {
-        intake.telemetry(this.telemetry);
-        lift.telemetry(this.telemetry);
-        drive.telemetry(this.telemetry);
-
-        this.telemetry.update();
+        robotState.telemetry(telemetry);
     }
 }

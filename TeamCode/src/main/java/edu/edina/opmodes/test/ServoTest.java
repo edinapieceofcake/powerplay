@@ -1,4 +1,4 @@
-package edu.edina.opmodes.teleop;
+package edu.edina.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
