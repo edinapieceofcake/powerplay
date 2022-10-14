@@ -82,8 +82,28 @@ public class Lift extends Subsystem {
 
     public void setLiftProperties(double liftSpeed, double armPosition, boolean latchOpen,
                                   boolean lowPole, boolean mediumPole, boolean highPole) {
-        robotState.LiftSpeed = liftSpeed;
-        robotState.LiftArmServoLocation = armPosition;
+        if (liftServo.getPosition()>0){
+            if (liftMotor.getCurrentPosition()>200){
+                robotState.LiftSpeed = liftSpeed;
+            } else if (liftSpeed < 0){
+                robotState.LiftSpeed = 0;
+            } else{
+                robotState.LiftSpeed = liftSpeed;
+            }
+        } else if(robotState.SlideArmMotorLocation < 100){
+            robotState.LiftSpeed = 0;
+        } else if(liftSpeed < 0){
+            robotState.LiftSpeed = 0;
+        } else{
+            robotState.LiftSpeed = liftSpeed;
+        }
+        if (liftMotor.getCurrentPosition()<200) {
+            robotState.LiftArmServoLocation = 0;
+        } else if(armPosition < 0){
+            robotState.LiftArmServoLocation = armPosition;
+        }else{
+            robotState.LiftArmServoLocation = armPosition;
+        }
         if (latchOpen) {
             robotState.LatchServoPosition = LatchServoPosition.Open;
         } else {

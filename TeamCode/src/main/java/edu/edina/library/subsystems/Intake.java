@@ -19,6 +19,7 @@ public class Intake extends Subsystem {
     private Servo slideArmServo;
     private CRServo intakeServo;
     private RobotState robotState;
+    private Servo liftServo;
 
     public Intake(HardwareMap map, RobotState robotState){
         try {
@@ -26,6 +27,7 @@ public class Intake extends Subsystem {
             slideArmMotor = map.get(DcMotorEx.class, "slideArmMotor");
             slideArmServo = map.get(Servo.class, "slideArmServo");
             intakeServo = map.get(CRServo.class, "intakeServo");
+            liftServo = map.get(Servo.class, "liftServo");
 
             slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slideArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -39,6 +41,12 @@ public class Intake extends Subsystem {
 
     @Override
     public void update() {
+        if (liftServo.getPosition() < 0 || liftServo.getPosition() > 200){
+            slideMotor.setPower(/*SlideMotor needs to be added figure out later*/0);
+        }
+        if (slideArmMotor.getCurrentPosition() < 0){
+            slideArmMotor.setPower(0);
+        }
         if (robotState.IntakeSuccessfullySetup) {
             if (robotState.SlideMotorAction == SlideMotorAction.SlideIn) {
                 slideMotor.setPower(.5);
