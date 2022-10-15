@@ -36,7 +36,10 @@ public class TestIntake extends LinearOpMode {
 
         while (opModeIsActive()){
             if (resetOnce) {
-                servoLocation = -.000777777777777777 * intakeMotor.getCurrentPosition() + .8;
+                servoLocation = -.7/1560 * intakeMotor.getCurrentPosition() + .8;
+                if (intakeMotor.getCurrentPosition() > 1350) {
+                    servoLocation = .2;
+                }
                 armServo.setPosition(servoLocation);
             }
             pad1.update();

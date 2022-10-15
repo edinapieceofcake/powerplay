@@ -15,13 +15,13 @@ public class TestIntakeAndLift extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Stickygamepad pad1 = new Stickygamepad(gamepad1);
-//        DcMotorEx slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
+        Stickygamepad pad2 = new Stickygamepad(gamepad2);
+        DcMotorEx slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-        Servo armServo = hardwareMap.get(Servo.class, "armServo");
+        DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         DigitalChannel armSwitch = hardwareMap.get(DigitalChannel.class, "armSwitch");
-        Stickygamepad pad2 = new Stickygamepad(gamepad2);
-        DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        Servo armServo = hardwareMap.get(Servo.class, "armServo");
         Servo liftArmServo = hardwareMap.get(Servo.class, "liftArmServo");
         Servo latchServo = hardwareMap.get(Servo.class, "latchServo");
         boolean armMotorReset = false;
@@ -29,7 +29,7 @@ public class TestIntakeAndLift extends LinearOpMode {
         double servoLocation = 0.0;
 
         armSwitch.setMode(DigitalChannel.Mode.INPUT);
-        //slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -110,7 +110,8 @@ public class TestIntakeAndLift extends LinearOpMode {
             } else {
                 liftMotor.setPower(0);
             }
-//            telemetry.addData("Slide Position", slideMotor.getCurrentPosition());
+
+            telemetry.addData("Slide Position", slideMotor.getCurrentPosition());
             telemetry.addData("Intake Motor", intakeMotor.getCurrentPosition());
             telemetry.addData("Intake Zero", intakeMotor.getZeroPowerBehavior());
             telemetry.addData("Arm Servo", armServo.getPosition());
