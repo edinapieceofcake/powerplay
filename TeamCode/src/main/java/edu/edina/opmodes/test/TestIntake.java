@@ -16,7 +16,10 @@ import edu.edina.library.util.Stickygamepad;
 public class TestIntake extends LinearOpMode {
     public static int LIFTRUNTOPOSITION = 1300;
     public static int SLIDERUNTOPOSITION = 1000;
+    public static double STARTSERVOPOSITION = 0.2;
     public static double ENDSERVOPOSITION = 0.2;
+    public static int TRANSFERARMPOSITION = 500;
+    public static int TRANSFERSLIDEPOSITION = 500;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,21 +86,29 @@ public class TestIntake extends LinearOpMode {
             }
 
             if (pad1.x) {
-                if (!runningSlideToPosition) {
-                    intakeMotor.setTargetPosition(SLIDERUNTOPOSITION);
+
+                    slideMotor.setTargetPosition(SLIDERUNTOPOSITION);
+                    slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slideMotor.setPower(.5);
+                    runningArmToPosition=true;
+                    intakeMotor.setTargetPosition(LIFTRUNTOPOSITION);
                     intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     intakeMotor.setPower(.5);
-                }
-                runningSlideToPosition = true;
+                    armServo.setPosition(STARTSERVOPOSITION);
+                    intakeServo.setPower(0.5);
             }
 
             if (pad1.y) {
-                if (!runningSlideToPosition) {
-                    intakeMotor.setTargetPosition(0);
+
+                    slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
+                    slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slideMotor.setPower(.5);
+                    runningArmToPosition=true;
+                    intakeMotor.setTargetPosition(TRANSFERARMPOSITION);
                     intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     intakeMotor.setPower(.5);
-                }
-                runningSlideToPosition = true;
+                    armServo.setPosition(ENDSERVOPOSITION);
+                    intakeServo.setPower(0.5);
             }
 
             if (gamepad1.left_trigger != 0) {
@@ -105,7 +116,7 @@ public class TestIntake extends LinearOpMode {
             } else if (gamepad1.right_trigger != 0){
                 intakeServo.setPower(-gamepad1.right_trigger);
             } else {
-                intakeServo.setPower(0);
+               // intakeServo.setPower(0);
             }
 
             if (gamepad1.left_bumper) {
