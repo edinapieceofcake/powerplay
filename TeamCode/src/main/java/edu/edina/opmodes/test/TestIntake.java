@@ -35,6 +35,7 @@ public class TestIntake extends LinearOpMode {
         boolean resetOnce = false;
         boolean runningArmToPosition = false;
         boolean runningSlideToPosition = false;
+        boolean pickingup = false;
         double servoLocation = 0.0;
 
         armSwitch.setMode(DigitalChannel.Mode.INPUT);
@@ -86,29 +87,39 @@ public class TestIntake extends LinearOpMode {
             }
 
             if (pad1.x) {
-
-                    slideMotor.setTargetPosition(SLIDERUNTOPOSITION);
-                    slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    slideMotor.setPower(.5);
-                    runningArmToPosition=true;
-                    intakeMotor.setTargetPosition(LIFTRUNTOPOSITION);
-                    intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    intakeMotor.setPower(.5);
-                    armServo.setPosition(STARTSERVOPOSITION);
-                    intakeServo.setPower(0.5);
+                pickingup = true;
+                slideMotor.setTargetPosition(SLIDERUNTOPOSITION);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideMotor.setPower(.5);
+                runningArmToPosition=true;
+                intakeMotor.setTargetPosition(LIFTRUNTOPOSITION);
+                intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intakeMotor.setPower(.5);
+                armServo.setPosition(STARTSERVOPOSITION);
+                intakeServo.setPower(0.5);
             }
 
             if (pad1.y) {
+                pickingup = false;
+                slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideMotor.setPower(.5);
+                runningArmToPosition=true;
+                intakeMotor.setTargetPosition(TRANSFERARMPOSITION);
+                intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intakeMotor.setPower(.5);
+                armServo.setPosition(ENDSERVOPOSITION);
+                intakeServo.setPower(0.5);
+            }
 
-                    slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
-                    slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    slideMotor.setPower(.5);
-                    runningArmToPosition=true;
-                    intakeMotor.setTargetPosition(TRANSFERARMPOSITION);
-                    intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    intakeMotor.setPower(.5);
-                    armServo.setPosition(ENDSERVOPOSITION);
-                    intakeServo.setPower(0.5);
+            if ((slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) &&
+                (intakeMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) && !pickingup) {
+                double slidediff = Math.abs(slideMotor.getCurrentPosition() - slideMotor.getTargetPosition()) / Math.abs(slideMotor.getTargetPosition());
+                double intakediff = Math.abs(intakeMotor.getCurrentPosition() - intakeMotor.getTargetPosition()) / Math.abs(intakeMotor.getTargetPosition());
+                if ((intakediff < .1) && (slidediff < 0.1))
+                {
+                    intakeServo.setPower(-0.5);
+                }
             }
 
             if (gamepad1.left_trigger != 0) {
