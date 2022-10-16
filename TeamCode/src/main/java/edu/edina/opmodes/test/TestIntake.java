@@ -1,5 +1,6 @@
 package edu.edina.opmodes.test;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -11,7 +12,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import edu.edina.library.util.Stickygamepad;
 
 @TeleOp
+@Config
 public class TestIntake extends LinearOpMode {
+    public static int RUNTOPOSITIONLOCATION = 1300;
+    public static double ENDSERVOPOSITION = 0.2;
+
     @Override
     public void runOpMode() throws InterruptedException {
         Stickygamepad pad1 = new Stickygamepad(gamepad1);
@@ -22,6 +27,7 @@ public class TestIntake extends LinearOpMode {
         DigitalChannel armSwitch = hardwareMap.get(DigitalChannel.class, "armSwitch");
         boolean armMotorReset = false;
         boolean resetOnce = false;
+        boolean runningToPosition = false;
         double servoLocation = 0.0;
 
         armSwitch.setMode(DigitalChannel.Mode.INPUT);
@@ -38,7 +44,7 @@ public class TestIntake extends LinearOpMode {
             if (resetOnce) {
                 servoLocation = -.7/1560 * intakeMotor.getCurrentPosition() + .8;
                 if (intakeMotor.getCurrentPosition() > 1350) {
-                    servoLocation = .2;
+                    servoLocation = ENDSERVOPOSITION;
                 }
                 armServo.setPosition(servoLocation);
             }
@@ -51,6 +57,25 @@ public class TestIntake extends LinearOpMode {
                 armServo.setPosition(armServo.getPosition()-0.1);
                 resetOnce = false;
             }
+
+            if (pad1.a) {
+                if (!runningToPosition) {
+                    intakeMotor.setTargetPosition(RUNTOPOSITIONLOCATION);
+                    intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    intakeMotor.setPower(.5);
+                }
+                runningToPosition = true;
+            }
+
+            if (pad1.b) {
+                if (!runningToPosition) {
+                    intakeMotor.setTargetPosition(0);
+                    intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    intakeMotor.setPower(.5);
+                }
+                runningToPosition = true;
+            }
+
             if (gamepad1.left_trigger != 0) {
                 intakeServo.setPower(gamepad1.left_trigger);
             } else if (gamepad1.right_trigger != 0){
@@ -60,10 +85,18 @@ public class TestIntake extends LinearOpMode {
             }
 
             if (gamepad1.left_bumper) {
+                if (runningToPosition) {
+                    intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
                 intakeMotor.setPower(.5);
+                runningToPosition = false;
             } else if (gamepad1.right_bumper) {
+                if (runningToPosition) {
+                    intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
                 intakeMotor.setPower(-.5);
-            } else {
+                runningToPosition = false;
+            } else if (!runningToPosition){
                 intakeMotor.setPower(0);
             }
 
