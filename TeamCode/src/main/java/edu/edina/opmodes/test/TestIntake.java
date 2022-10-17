@@ -14,11 +14,12 @@ import edu.edina.library.util.Stickygamepad;
 @TeleOp
 @Config
 public class TestIntake extends LinearOpMode {
-    public static int LIFTRUNTOPOSITION = 1300;
-    public static int SLIDERUNTOPOSITION = 1000;
+    public static int LIFTRUNTOPOSITION = 1450;
+    public static int SLIDERUNTOPOSITION = 700;
     public static double STARTSERVOPOSITION = 0.2;
-    public static double ENDSERVOPOSITION = 0.2;
-    public static int TRANSFERARMPOSITION = 500;
+    public static double ENDSERVOPOSITION = 0.15;
+    public static double MOTORSPEED = 0.4;
+    public static int TRANSFERARMPOSITION = 60;
     public static int TRANSFERSLIDEPOSITION = 500;
 
     @Override
@@ -72,7 +73,7 @@ public class TestIntake extends LinearOpMode {
                 if (!runningArmToPosition) {
                     intakeMotor.setTargetPosition(LIFTRUNTOPOSITION);
                     intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    intakeMotor.setPower(.5);
+                    intakeMotor.setPower(MOTORSPEED);
                 }
                 runningArmToPosition = true;
             }
@@ -81,7 +82,7 @@ public class TestIntake extends LinearOpMode {
                 if (!runningArmToPosition) {
                     intakeMotor.setTargetPosition(0);
                     intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    intakeMotor.setPower(.5);
+                    intakeMotor.setPower(MOTORSPEED);
                 }
                 runningArmToPosition = true;
             }
@@ -90,11 +91,11 @@ public class TestIntake extends LinearOpMode {
                 pickingup = true;
                 slideMotor.setTargetPosition(SLIDERUNTOPOSITION);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                slideMotor.setPower(.5);
+                slideMotor.setPower(MOTORSPEED);
                 runningArmToPosition=true;
                 intakeMotor.setTargetPosition(LIFTRUNTOPOSITION);
                 intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                intakeMotor.setPower(.5);
+                intakeMotor.setPower(MOTORSPEED);
                 armServo.setPosition(STARTSERVOPOSITION);
                 intakeServo.setPower(0.5);
             }
@@ -103,11 +104,11 @@ public class TestIntake extends LinearOpMode {
                 pickingup = false;
                 slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                slideMotor.setPower(.5);
+                slideMotor.setPower(MOTORSPEED);
                 runningArmToPosition=true;
                 intakeMotor.setTargetPosition(TRANSFERARMPOSITION);
                 intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                intakeMotor.setPower(.5);
+                intakeMotor.setPower(MOTORSPEED);
                 armServo.setPosition(ENDSERVOPOSITION);
                 intakeServo.setPower(0.5);
             }
@@ -134,13 +135,13 @@ public class TestIntake extends LinearOpMode {
                 if (runningArmToPosition) {
                     intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
-                intakeMotor.setPower(.5);
+                intakeMotor.setPower(MOTORSPEED);
                 runningArmToPosition = false;
             } else if (gamepad1.right_bumper) {
                 if (runningArmToPosition) {
                     intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
-                intakeMotor.setPower(-.5);
+                intakeMotor.setPower(-MOTORSPEED);
                 runningArmToPosition = false;
             } else if (!runningArmToPosition){
                 intakeMotor.setPower(0);
