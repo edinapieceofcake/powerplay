@@ -124,16 +124,16 @@ public class TestIntake extends LinearOpMode {
             }
 
             if (!mainintakeSwitch.getState()) {
-                    if (pickingup = true) {
+                    if (pickingup) {
                         if (!mainintakeloaded) {
                             intakeServo.setPower(0.1);
                             mainintakeloaded = true;
                                                     }
                     }
-            } else {
+         //   } else {
                 // switch state is true
-                iamhome = false; // not sure this is what you want
-            }
+         //       iamhome = false; // not sure this is what you want
+         //   }
 
             if ((slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) &&
                 (intakeMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) && !pickingup) {
