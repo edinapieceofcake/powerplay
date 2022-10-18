@@ -130,6 +130,9 @@ public class TestIntake extends LinearOpMode {
                             mainintakeloaded = true;
                                                     }
                     }
+            } else {
+                // switch state is true
+                iamhome = false; // not sure this is what you want
             }
 
             if ((slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) &&
