@@ -128,8 +128,7 @@ public class TestIntake extends LinearOpMode {
                         if (!mainintakeloaded) {
                             intakeServo.setPower(0.1);
                             mainintakeloaded = true;
-                            pickingup = false;
-                        }
+                                                    }
                     }
             }
 
