@@ -19,7 +19,7 @@ public class TestIntake extends LinearOpMode {
     public static double STARTSERVOPOSITION = 0.2;
     public static double ENDSERVOPOSITION = 0.15;
     public static double MOTORSPEED = 0.4;
-    public static int TRANSFERARMPOSITION = 60;
+    public static int TRANSFERARMPOSITION = 100;
     public static int TRANSFERSLIDEPOSITION = 500;
 
     @Override
@@ -31,15 +31,19 @@ public class TestIntake extends LinearOpMode {
         CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
         DigitalChannel armSwitch = hardwareMap.get(DigitalChannel.class, "armSwitch");
         DigitalChannel slideSwitch = hardwareMap.get(DigitalChannel.class, "slideSwitch");
+        DigitalChannel mainintakeSwitch = hardwareMap.get(DigitalChannel.class, "mainintakeSwitch");
         boolean armMotorReset = false;
         boolean slideMotorReset = false;
         boolean resetOnce = false;
         boolean runningArmToPosition = false;
         boolean runningSlideToPosition = false;
         boolean pickingup = false;
+        boolean mainintakeloaded = false;
+        boolean iamhome = true;
         double servoLocation = 0.0;
 
         armSwitch.setMode(DigitalChannel.Mode.INPUT);
+        mainintakeSwitch.setMode(DigitalChannel.Mode.INPUT);
         slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -47,9 +51,13 @@ public class TestIntake extends LinearOpMode {
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        pickingup = false;
+
+
         // range from .8 to .1, 0 - 900
         armServo.setPosition(0.8);
         waitForStart();
+
 
         while (opModeIsActive()){
             if (resetOnce) {
@@ -66,7 +74,7 @@ public class TestIntake extends LinearOpMode {
             }
             if (pad1.dpad_down) {
                 armServo.setPosition(armServo.getPosition()-0.1);
-                resetOnce = false;
+                ;
             }
 
             if (pad1.a) {
@@ -89,6 +97,8 @@ public class TestIntake extends LinearOpMode {
 
             if (pad1.x) {
                 pickingup = true;
+                mainintakeloaded = false;
+                iamhome = false;
                 slideMotor.setTargetPosition(SLIDERUNTOPOSITION);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 slideMotor.setPower(MOTORSPEED);
@@ -110,16 +120,27 @@ public class TestIntake extends LinearOpMode {
                 intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 intakeMotor.setPower(MOTORSPEED);
                 armServo.setPosition(ENDSERVOPOSITION);
-                intakeServo.setPower(0.5);
+                intakeServo.setPower(0.1);
+            }
+
+            if (!mainintakeSwitch.getState()) {
+                    if (pickingup = true) {
+                        if (!mainintakeloaded) {
+                            intakeServo.setPower(0.1);
+                            mainintakeloaded = true;
+                            pickingup = false;
+                        }
+                    }
             }
 
             if ((slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) &&
                 (intakeMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) && !pickingup) {
                 double slidediff = Math.abs(slideMotor.getCurrentPosition() - slideMotor.getTargetPosition()) / Math.abs(slideMotor.getTargetPosition());
                 double intakediff = Math.abs(intakeMotor.getCurrentPosition() - intakeMotor.getTargetPosition()) / Math.abs(intakeMotor.getTargetPosition());
-                if ((intakediff < .1) && (slidediff < 0.1))
+                if ((intakediff < .05) && (slidediff < 0.05))
                 {
                     intakeServo.setPower(-0.5);
+                    iamhome = true;
                 }
             }
 
@@ -178,6 +199,10 @@ public class TestIntake extends LinearOpMode {
             telemetry.addData("Arm Servo Calculated", servoLocation);
             telemetry.addData("Intake Servo", intakeServo.getPower());
             telemetry.addData("Arm Switch", armSwitch.getState());
+            telemetry.addData("Main Intake Switch", mainintakeSwitch.getState());
+            telemetry.addData("Intake Servo Power", intakeServo.getPower());
+            telemetry.addData("Iamhome", iamhome);
+ //           telemetry.addData("Main Intake loaded", mainintakeloaded.getState());
             telemetry.addData("Arm Motor Reset", armMotorReset);
             telemetry.update();
         }
