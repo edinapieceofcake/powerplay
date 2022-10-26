@@ -14,7 +14,7 @@ public class RobotState {
     public IntakeServoAction IntakeServoAction = edu.edina.library.util.IntakeServoAction.Idle;
     public SlideArmMotorAction SlideArmMotorAction = edu.edina.library.util.SlideArmMotorAction.Idle;
     public SlideZone SlideZone = edu.edina.library.util.SlideZone.AllowFullMovement;
-    public IntakeArmZone ArmZone = edu.edina.library.util.IntakeArmZone.AllowFullMovcment;
+    public IntakeArmZone ArmZone = edu.edina.library.util.IntakeArmZone.AllowFullMovement;
 
     public double LatchServoLocation = 0;
     public double LiftArmServoLocation = 0;
@@ -23,8 +23,8 @@ public class RobotState {
     public LatchServoPosition LatchServoPosition = edu.edina.library.util.LatchServoPosition.Closed;
     public PoleLocation CurrentPoleLocation = edu.edina.library.util.PoleLocation.None;
     public PoleLocation TargetPoleLocation = edu.edina.library.util.PoleLocation.None;
-    public LiftZone LiftZone = edu.edina.library.util.LiftZone.AllowFullMovememnt;
-    public LiftArmZone LiftArmZone = edu.edina.library.util.LiftArmZone.AllowFullMovcment;
+    public LiftZone LiftZone = edu.edina.library.util.LiftZone.AllowFullMovement;
+    public LiftArmZone LiftArmZone = edu.edina.library.util.LiftArmZone.AllowFullMovement;
 
     public boolean IntakeSuccessfullySetup = false;
     public boolean LiftSuccessfullySetup = false;

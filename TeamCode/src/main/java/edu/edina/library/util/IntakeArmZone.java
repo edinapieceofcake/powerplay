@@ -1,7 +1,7 @@
 package edu.edina.library.util;
 
 public enum IntakeArmZone {
-    AllowFullMovcment,
+    AllowFullMovement,
     AllowOnlyOut,
     AllowOnlyIn,
     AllowNoMovement
