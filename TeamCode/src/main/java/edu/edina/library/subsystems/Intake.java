@@ -22,10 +22,10 @@ public class Intake extends Subsystem {
     public static double STARTSERVOPOSITION = 0.2;
     public static double ENDSERVOPOSITION = 0.19;
     public static double MOTORSPEED = 0.4;
-    public static int TRANSFERARMPOSITION = 100;
-    public static int TRANSFERSLIDEPOSITION = 500;
-    public static int MIDDLETRANSFERPOSITION = 600;
-    public static int MIDDLEARMPOSITION = 700;
+    public static int TRANSFERSLIDEPOSITION = 530;
+    public static int TRANSFERARMPOSITION = 150;
+    public static int MIDDLESLIDEPOSITION = 930;
+    public static int MIDDLEARMPOSITION = 410;
 
     private DcMotorEx slideMotor;
     private DcMotorEx intakeMotor;
@@ -41,6 +41,7 @@ public class Intake extends Subsystem {
     private boolean armMotorReset;
 
     private boolean foldingArmInRunning = false;
+    private boolean atConeDrop = false;
     private boolean droppedOffCone = false;
     private long droppedOffTime = 0;
 
@@ -88,25 +89,43 @@ public class Intake extends Subsystem {
                 slideArmServo.setPosition(ENDSERVOPOSITION);
                 intakeServo.setPower(0.1);
                 foldingArmInRunning = true;
-            } else if (!droppedOffCone) {
-                double slidediff = Math.abs(slideMotor.getCurrentPosition() - slideMotor.getTargetPosition()) / Math.abs(slideMotor.getTargetPosition());
-                double intakediff = Math.abs(intakeMotor.getCurrentPosition() - intakeMotor.getTargetPosition()) / Math.abs(intakeMotor.getTargetPosition());
-                if ((intakediff < .05) && (slidediff < 0.05)) {
-                    intakeServo.setPower(-0.5);
-                    droppedOffCone = true;
-                    droppedOffTime = System.currentTimeMillis();
-                }
-            } else if ((droppedOffTime + 100) > System.currentTimeMillis()){
-                // stop everything
-                intakeMotor.setPower(0);
-                slideMotor.setPower(0);
-                intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robotState.AutoFoldInArm = false;
-                foldingArmInRunning = false;
+                atConeDrop = false;
                 droppedOffCone = false;
-                //slideMotor.setTargetPosition(MIDDLETRANSFERPOSITION);
-                //intakeMotor.setTargetPosition(MIDDLEARMPOSITION);
+                droppedOffTime = 0;
+            } else if (!atConeDrop) {
+                long slidediff = Math.abs(slideMotor.getCurrentPosition() - TRANSFERSLIDEPOSITION);
+                long intakediff = Math.abs(intakeMotor.getCurrentPosition() - TRANSFERARMPOSITION);
+                robotState.IntakeDiff = intakediff;
+                robotState.SlideDiff = slidediff;
+                if ((intakediff < 50) && (slidediff < 50)) {
+                    intakeServo.setPower(-0.5);
+                    atConeDrop = true;
+                    droppedOffTime = System.currentTimeMillis();
+                    robotState.DroppedOfftime = droppedOffTime;
+                }
+            } else if (atConeDrop && !droppedOffCone && (System.currentTimeMillis() > (droppedOffTime + 1000))) {
+                intakeServo.setPower(0);
+                droppedOffCone = true;
+                robotState.DroppedOffCone = droppedOffCone;
+                slideMotor.setTargetPosition(MIDDLESLIDEPOSITION);
+                intakeMotor.setTargetPosition(MIDDLEARMPOSITION);
+            } else if (droppedOffCone) {
+                long slidediff = Math.abs(slideMotor.getCurrentPosition() - MIDDLESLIDEPOSITION);
+                long intakediff = Math.abs(intakeMotor.getCurrentPosition() - MIDDLEARMPOSITION);
+                robotState.IntakeDiff = intakediff;
+                robotState.SlideDiff = slidediff;
+                if ((intakediff < 50) && (slidediff < 50)) {
+                    // stop everything
+                    intakeMotor.setPower(0);
+                    slideMotor.setPower(0);
+                    intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    robotState.AutoFoldInArm = false;
+                    foldingArmInRunning = false;
+                    droppedOffCone = false;
+                    atConeDrop = false;
+                    droppedOffTime = 0;
+                }
             }
         } else {
             // manual control area
@@ -173,6 +192,8 @@ public class Intake extends Subsystem {
         robotState.IntakeMotorLocation = intakeMotor.getCurrentPosition();
         robotState.SlideMotorLocation = slideMotor.getCurrentPosition();
         robotState.SlideIntakeSwitch = mainIntakeSwitch.getState();
+        robotState.SlideSwitch = slideSwitch.getState();
+        robotState.ArmSwitch = armSwitch.getState();
     }
 
     public void setIntakeProperties(boolean intakeCone, boolean expelCone, boolean slideIn, boolean slideOut,

@@ -11,12 +11,18 @@ public class RobotState {
     public long IntakeMotorLocation = 0;
     public double SlideArmServoLocation = 0;
     public boolean SlideIntakeSwitch = false;
+    public boolean SlideSwitch = false;
+    public boolean ArmSwitch = false;
     public SlideMotorAction SlideMotorAction = edu.edina.library.util.SlideMotorAction.Idle;
     public IntakeServoAction IntakeServoAction = edu.edina.library.util.IntakeServoAction.Idle;
     public SlideArmMotorAction SlideArmMotorAction = edu.edina.library.util.SlideArmMotorAction.Idle;
     public SlideZone SlideZone = edu.edina.library.util.SlideZone.AllowFullMovement;
     public IntakeArmZone ArmZone = edu.edina.library.util.IntakeArmZone.AllowFullMovcment;
     public boolean AutoFoldInArm = false;
+    public boolean DroppedOffCone = false;
+    public long IntakeDiff;
+    public long SlideDiff;
+    public long DroppedOfftime;
 
     public double LatchServoLocation = 0;
     public double LiftArmServoLocation = 0;
@@ -40,8 +46,14 @@ public class RobotState {
             telemetry.addData("Arm Position", IntakeMotorLocation);
             telemetry.addData("Intake Servo", IntakeServoAction);
             telemetry.addData("Arm Servo Position", SlideArmServoLocation);
-            telemetry.addData("Slide Intake Switch", SlideIntakeSwitch);
             telemetry.addData("Folding Arm In", AutoFoldInArm);
+            telemetry.addData("Slide Intake Switch", SlideIntakeSwitch);
+            telemetry.addData("Slide Switch", SlideSwitch);
+            telemetry.addData("Arm Switch", ArmSwitch);
+            telemetry.addData("Slide Diff", SlideDiff);
+            telemetry.addData("Intake Diff", IntakeDiff);
+            telemetry.addData("Dropped off time", DroppedOfftime);
+            telemetry.addData("Dropped off cone", DroppedOffCone);
         } else {
             telemetry.addData("Unable to setup motors slideMotor or flipMotor or setup servos flipServo or intakeServo", "");
         }

@@ -2,10 +2,10 @@ package edu.edina.opmodes.teleop;
 
 import edu.edina.library.util.Stickygamepad;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "BlueTeleop", group = "teleop")
-
-public class TeleOp extends OpMode {
+@TeleOp(name = "BlueTeleop", group = "teleop")
+public class BlueTeleop extends OpMode {
     private Robot robot;
     private Stickygamepad _gamepad1;
     private Stickygamepad _gamepad2;
@@ -34,7 +34,7 @@ public class TeleOp extends OpMode {
         robot.lift.setLiftProperties(gamepad2.right_stick_y, gamepad2.left_stick_x, gamepad2.left_bumper, _gamepad2.x, _gamepad2.y, _gamepad2.b);
 
         robot.intake.setIntakeProperties(_gamepad1.x, _gamepad1.b, (gamepad1.left_trigger != 0),
-                (gamepad1.right_trigger != 0), gamepad1.left_bumper, gamepad1.right_bumper,
+                (gamepad1.right_trigger != 0), gamepad1.right_bumper, gamepad1.left_bumper,
                 _gamepad2.dpad_up, _gamepad2.dpad_down);
 
         robot.telemetry();
