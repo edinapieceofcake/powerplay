@@ -14,7 +14,7 @@ public class TestLift extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Stickygamepad pad1 = new Stickygamepad(gamepad1);
         DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
-        Servo armServo = hardwareMap.get(Servo.class, "armServo");
+        Servo armServo = hardwareMap.get(Servo.class, "liftArmServo");
         Servo latchServo = hardwareMap.get(Servo.class, "latchServo");
 
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -59,21 +59,21 @@ public class TestIntake extends LinearOpMode {
         waitForStart();
 
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             if (resetOnce) {
-                servoLocation = -.7/1560 * intakeMotor.getCurrentPosition() + .8;
+                servoLocation = -.7 / 1560 * intakeMotor.getCurrentPosition() + .8;
                 if (intakeMotor.getCurrentPosition() > 1350) {
                     servoLocation = ENDSERVOPOSITION;
                 }
                 armServo.setPosition(servoLocation);
             }
             pad1.update();
-            if (pad1.dpad_up){
-                armServo.setPosition(armServo.getPosition()+0.1);
+            if (pad1.dpad_up) {
+                armServo.setPosition(armServo.getPosition() + 0.1);
                 resetOnce = false;
             }
             if (pad1.dpad_down) {
-                armServo.setPosition(armServo.getPosition()-0.1);
+                armServo.setPosition(armServo.getPosition() - 0.1);
                 ;
             }
 
@@ -102,7 +102,7 @@ public class TestIntake extends LinearOpMode {
                 slideMotor.setTargetPosition(SLIDERUNTOPOSITION);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 slideMotor.setPower(MOTORSPEED);
-                runningArmToPosition=true;
+                runningArmToPosition = true;
                 intakeMotor.setTargetPosition(LIFTRUNTOPOSITION);
                 intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 intakeMotor.setPower(MOTORSPEED);
@@ -115,7 +115,7 @@ public class TestIntake extends LinearOpMode {
                 slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
                 slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 slideMotor.setPower(MOTORSPEED);
-                runningArmToPosition=true;
+                runningArmToPosition = true;
                 intakeMotor.setTargetPosition(TRANSFERARMPOSITION);
                 intakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 intakeMotor.setPower(MOTORSPEED);
@@ -124,89 +124,88 @@ public class TestIntake extends LinearOpMode {
             }
 
             if (!mainintakeSwitch.getState()) {
-                    if (pickingup) {
-                        if (!mainintakeloaded) {
-                            intakeServo.setPower(0.1);
-                            mainintakeloaded = true;
-                                                    }
+                if (pickingup) {
+                    if (!mainintakeloaded) {
+                        intakeServo.setPower(0.1);
+                        mainintakeloaded = true;
                     }
-         //   } else {
+                }
+                //   } else {
                 // switch state is true
-         //       iamhome = false; // not sure this is what you want
-         //   }
+                //       iamhome = false; // not sure this is what you want
+                //   }
 
-            if ((slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) &&
-                (intakeMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) && !pickingup) {
-                double slidediff = Math.abs(slideMotor.getCurrentPosition() - slideMotor.getTargetPosition()) / Math.abs(slideMotor.getTargetPosition());
-                double intakediff = Math.abs(intakeMotor.getCurrentPosition() - intakeMotor.getTargetPosition()) / Math.abs(intakeMotor.getTargetPosition());
-                if ((intakediff < .05) && (slidediff < 0.05))
-                {
-                    intakeServo.setPower(-0.5);
-                    iamhome = true;
+                if ((slideMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) &&
+                        (intakeMotor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) && !pickingup) {
+                    double slidediff = Math.abs(slideMotor.getCurrentPosition() - slideMotor.getTargetPosition()) / Math.abs(slideMotor.getTargetPosition());
+                    double intakediff = Math.abs(intakeMotor.getCurrentPosition() - intakeMotor.getTargetPosition()) / Math.abs(intakeMotor.getTargetPosition());
+                    if ((intakediff < .05) && (slidediff < 0.05)) {
+                        intakeServo.setPower(-0.5);
+                        iamhome = true;
+                    }
                 }
-            }
 
-            if (gamepad1.left_trigger != 0) {
-                intakeServo.setPower(gamepad1.left_trigger);
-            } else if (gamepad1.right_trigger != 0){
-                intakeServo.setPower(-gamepad1.right_trigger);
-            } else {
-               // intakeServo.setPower(0);
-            }
-
-            if (gamepad1.left_bumper) {
-                if (runningArmToPosition) {
-                    intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if (gamepad1.left_trigger != 0) {
+                    intakeServo.setPower(gamepad1.left_trigger);
+                } else if (gamepad1.right_trigger != 0) {
+                    intakeServo.setPower(-gamepad1.right_trigger);
+                } else {
+                    // intakeServo.setPower(0);
                 }
-                intakeMotor.setPower(MOTORSPEED);
-                runningArmToPosition = false;
-            } else if (gamepad1.right_bumper) {
-                if (runningArmToPosition) {
-                    intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }
-                intakeMotor.setPower(-MOTORSPEED);
-                runningArmToPosition = false;
-            } else if (!runningArmToPosition){
-                intakeMotor.setPower(0);
-            }
 
-            if (armSwitch.getState()) {
-                if (!armMotorReset) {
-                    armMotorReset = true;
-                    resetOnce = true;
-                    intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                if (gamepad1.left_bumper) {
+                    if (runningArmToPosition) {
+                        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
+                    intakeMotor.setPower(MOTORSPEED);
+                    runningArmToPosition = false;
+                } else if (gamepad1.right_bumper) {
+                    if (runningArmToPosition) {
+                        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
+                    intakeMotor.setPower(-MOTORSPEED);
+                    runningArmToPosition = false;
+                } else if (!runningArmToPosition) {
+                    intakeMotor.setPower(0);
                 }
-            } else {
-                armMotorReset = false;
-            }
 
-            if (slideSwitch.getState())
-            {
-                if (!slideMotorReset) {
-                    slideMotorReset = true;
-                    slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                if (armSwitch.getState()) {
+                    if (!armMotorReset) {
+                        armMotorReset = true;
+                        resetOnce = true;
+                        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    }
+                } else {
+                    armMotorReset = false;
                 }
-            } else {
-                slideMotorReset = false;
-            }
 
-            telemetry.addData("Slide Position", slideMotor.getCurrentPosition());
-            telemetry.addData("Intake Motor", intakeMotor.getCurrentPosition());
-            telemetry.addData("Intake Zero", intakeMotor.getZeroPowerBehavior());
-            telemetry.addData("Arm Servo", armServo.getPosition());
-            telemetry.addData("Arm Servo Calculated", servoLocation);
-            telemetry.addData("Intake Servo", intakeServo.getPower());
-            telemetry.addData("Arm Switch", armSwitch.getState());
-            telemetry.addData("Main Intake Switch", mainintakeSwitch.getState());
-            telemetry.addData("Intake Servo Power", intakeServo.getPower());
-            telemetry.addData("Iamhome", iamhome);
- //           telemetry.addData("Main Intake loaded", mainintakeloaded.getState());
-            telemetry.addData("Arm Motor Reset", armMotorReset);
-            telemetry.update();
+                if (slideSwitch.getState()) {
+                    if (!slideMotorReset) {
+                        slideMotorReset = true;
+                        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                    }
+                } else {
+                    slideMotorReset = false;
+                }
+
+                telemetry.addData("Slide Position", slideMotor.getCurrentPosition());
+                telemetry.addData("Intake Motor", intakeMotor.getCurrentPosition());
+                telemetry.addData("Intake Zero", intakeMotor.getZeroPowerBehavior());
+                telemetry.addData("Arm Servo", armServo.getPosition());
+                telemetry.addData("Arm Servo Calculated", servoLocation);
+                telemetry.addData("Intake Servo", intakeServo.getPower());
+                telemetry.addData("Arm Switch", armSwitch.getState());
+                telemetry.addData("Main Intake Switch", mainintakeSwitch.getState());
+                telemetry.addData("Intake Servo Power", intakeServo.getPower());
+                telemetry.addData("Iamhome", iamhome);
+                //           telemetry.addData("Main Intake loaded", mainintakeloaded.getState());
+                telemetry.addData("Arm Motor Reset", armMotorReset);
+                telemetry.update();
+            }
         }
     }
 }

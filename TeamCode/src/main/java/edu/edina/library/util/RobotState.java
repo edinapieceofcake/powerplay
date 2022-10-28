@@ -8,13 +8,15 @@ public class RobotState {
     public DriveSpeed DriveSpeed = edu.edina.library.util.DriveSpeed.Medium;
 
     public long SlideMotorLocation = 0;
-    public long SlideArmMotorLocation = 0;
+    public long IntakeMotorLocation = 0;
     public double SlideArmServoLocation = 0;
+    public boolean SlideIntakeSwitch = false;
     public SlideMotorAction SlideMotorAction = edu.edina.library.util.SlideMotorAction.Idle;
     public IntakeServoAction IntakeServoAction = edu.edina.library.util.IntakeServoAction.Idle;
     public SlideArmMotorAction SlideArmMotorAction = edu.edina.library.util.SlideArmMotorAction.Idle;
     public SlideZone SlideZone = edu.edina.library.util.SlideZone.AllowFullMovement;
     public IntakeArmZone ArmZone = edu.edina.library.util.IntakeArmZone.AllowFullMovcment;
+    public boolean AutoFoldInArm = false;
 
     public double LatchServoLocation = 0;
     public double LiftArmServoLocation = 0;
@@ -35,8 +37,11 @@ public class RobotState {
     public void telemetry(Telemetry telemetry) {
         if (IntakeSuccessfullySetup) {
             telemetry.addData("Slide Position", SlideMotorLocation);
-            telemetry.addData("Arm Position", SlideArmMotorLocation);
+            telemetry.addData("Arm Position", IntakeMotorLocation);
+            telemetry.addData("Intake Servo", IntakeServoAction);
             telemetry.addData("Arm Servo Position", SlideArmServoLocation);
+            telemetry.addData("Slide Intake Switch", SlideIntakeSwitch);
+            telemetry.addData("Folding Arm In", AutoFoldInArm);
         } else {
             telemetry.addData("Unable to setup motors slideMotor or flipMotor or setup servos flipServo or intakeServo", "");
         }
