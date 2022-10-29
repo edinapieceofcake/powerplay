@@ -19,6 +19,7 @@ public class RobotState {
     public SlideZone SlideZone = edu.edina.library.util.SlideZone.AllowFullMovement;
     public IntakeArmZone ArmZone = edu.edina.library.util.IntakeArmZone.AllowFullMovcment;
     public boolean AutoFoldInArm = false;
+    public boolean AutoFoldOutArm = false;
     public boolean DroppedOffCone = false;
     public long IntakeDiff;
     public long SlideDiff;
