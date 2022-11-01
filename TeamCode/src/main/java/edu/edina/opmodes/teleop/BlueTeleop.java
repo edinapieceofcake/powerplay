@@ -33,7 +33,7 @@ public class BlueTeleop extends OpMode {
 
         robot.lift.setLiftProperties(gamepad2.right_stick_y, gamepad2.left_stick_x, gamepad2.left_bumper, _gamepad2.x, _gamepad2.y, _gamepad2.b);
 
-        robot.intake.setIntakeProperties(_gamepad1.x, _gamepad1.b, (gamepad1.left_trigger != 0),
+        robot.intake.setIntakeProperties(_gamepad1.x, (gamepad1.left_trigger != 0),
                 (gamepad1.right_trigger != 0), gamepad1.right_bumper, gamepad1.left_bumper,
                 _gamepad2.dpad_up, _gamepad2.dpad_down);
 

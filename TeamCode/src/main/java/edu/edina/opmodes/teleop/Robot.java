@@ -1,7 +1,9 @@
 package edu.edina.opmodes.teleop;
 
 import edu.edina.library.subsystems.Intake;
+import edu.edina.library.subsystems.Intake2;
 import edu.edina.library.subsystems.Lift;
+import edu.edina.library.subsystems.Lift2;
 import edu.edina.library.subsystems.MecanumDrive;
 import edu.edina.library.subsystems.Subsystem;
 import edu.edina.library.util.RobotState;
@@ -24,8 +26,8 @@ public class Robot {
 
     private Telemetry telemetry;
     public MecanumDrive drive;
-    public Lift lift;
-    public Intake intake;
+    public Lift2 lift;
+    public Intake2 intake;
     public RobotState robotState = new RobotState();
 
     private Runnable subsystemUpdateRunnable = () -> {
@@ -60,13 +62,13 @@ public class Robot {
 
         }
         try {
-            lift = new Lift(opMode.hardwareMap, robotState);
+            lift = new Lift2(opMode.hardwareMap, robotState);
             subsystems.add(lift);
         } catch (IllegalArgumentException e){
 
         }
         try {
-            intake = new Intake(opMode.hardwareMap, robotState);
+            intake = new Intake2(opMode.hardwareMap, robotState);
             subsystems.add(intake);
         } catch (IllegalArgumentException e){
 

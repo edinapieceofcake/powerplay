@@ -24,6 +24,8 @@ public class RobotState {
     public long IntakeDiff;
     public long SlideDiff;
     public long DroppedOfftime;
+    public boolean IntakeClampOpen;
+    public double FlipPosition = 0.45;
 
     public double LatchServoLocation = 0;
     public double LiftArmServoLocation = 0;
@@ -44,17 +46,13 @@ public class RobotState {
     public void telemetry(Telemetry telemetry) {
         if (IntakeSuccessfullySetup) {
             telemetry.addData("Slide Position", SlideMotorLocation);
-            telemetry.addData("Arm Position", IntakeMotorLocation);
-            telemetry.addData("Intake Servo", IntakeServoAction);
-            telemetry.addData("Arm Servo Position", SlideArmServoLocation);
             telemetry.addData("Folding Arm In", AutoFoldInArm);
-            telemetry.addData("Slide Intake Switch", SlideIntakeSwitch);
-            telemetry.addData("Slide Switch", SlideSwitch);
-            telemetry.addData("Arm Switch", ArmSwitch);
             telemetry.addData("Slide Diff", SlideDiff);
             telemetry.addData("Intake Diff", IntakeDiff);
             telemetry.addData("Dropped off time", DroppedOfftime);
             telemetry.addData("Dropped off cone", DroppedOffCone);
+            telemetry.addData("IntakeClampOpen", IntakeClampOpen);
+            telemetry.addData("FlipPosition", FlipPosition);
         } else {
             telemetry.addData("Unable to setup motors slideMotor or flipMotor or setup servos flipServo or intakeServo", "");
         }

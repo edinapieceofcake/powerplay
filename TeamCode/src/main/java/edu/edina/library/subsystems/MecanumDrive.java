@@ -29,7 +29,7 @@ public class MecanumDrive extends Subsystem{
             backLeft = new Motor(map, "leftRear", Motor.GoBILDA.RPM_312);
             backRight = new Motor(map, "rightRear", Motor.GoBILDA.RPM_312);
 
-            drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(false, frontLeft, frontRight, backLeft, backRight);
+            drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
             robotState.DriveSuccessfullySetup = true;
         } catch (Exception ex) {
             robotState.DriveSuccessfullySetup = false;
@@ -49,10 +49,7 @@ public class MecanumDrive extends Subsystem{
                 drive.setMaxSpeed(1);
             }
 
-            drive.driveRobotCentric(leftStickX, -rightstickX, leftStickY);
-//            drive.driveRobotCentric(leftStickY, rightstickX, leftStickX);
-//            drive.driveRobotCentric(rightstickX, leftStickX, leftStickY);
-//            drive.driveRobotCentric(leftStickX, leftStickY, -rightstickX);
+            drive.driveRobotCentric(-leftStickX, leftStickY, -rightstickX);
         }
     }
 
