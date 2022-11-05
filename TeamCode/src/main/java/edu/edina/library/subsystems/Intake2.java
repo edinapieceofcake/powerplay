@@ -69,22 +69,52 @@ public class Intake2 extends Subsystem {
 
     @Override
     public void update() {
-        // manual control area
-        if (robotState.SlideMotorAction == SlideMotorAction.SlideIn) {
-            slideMotor.setPower(-1);
-        } else if (robotState.SlideMotorAction == SlideMotorAction.SlideOut) {
-            slideMotor.setPower(1);
+        if (robotState.AutoFoldInArm) {
+            if (!foldingArmInRunning) {
+                slideMotor.setTargetPosition(580);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideMotor.setPower(1);
+                foldingArmInRunning = true;
+                atConeDrop = false;
+                robotState.FlipPosition = .25;
+                armFlipServo.setPosition(robotState.FlipPosition);
+            } else if (!atConeDrop) {
+                int diff = Math.abs(Math.abs(slideMotor.getCurrentPosition()) - 580);
+                if (diff < 10) {
+                    atConeDrop = true;
+                    clampServo.setPosition(1);
+                    robotState.IntakeClampOpen = true;
+                    droppedOffTime = System.currentTimeMillis();
+                    droppedOffCone = false;
+                }
+            } else if (!droppedOffCone) {
+                if (System.currentTimeMillis() > (droppedOffTime + 2000)) {
+                    robotState.FlipPosition = .45;
+                    armFlipServo.setPosition(robotState.FlipPosition);
+                    slideMotor.setPower(0);
+                    slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    robotState.AutoFoldInArm = false;
+                    foldingArmInRunning = false;
+                }
+            }
         } else {
-            slideMotor.setPower(0);
-        }
+            // manual control area
+            if (robotState.SlideMotorAction == SlideMotorAction.SlideIn) {
+                slideMotor.setPower(-1);
+            } else if (robotState.SlideMotorAction == SlideMotorAction.SlideOut) {
+                slideMotor.setPower(1);
+            } else {
+                slideMotor.setPower(0);
+            }
 
-        if (robotState.IntakeClampOpen) {
-            clampServo.setPosition(0);
-        } else {
-            clampServo.setPosition(1);
-        }
+            if (robotState.IntakeClampOpen) {
+                clampServo.setPosition(0);
+            } else {
+                clampServo.setPosition(1);
+            }
 
-        armFlipServo.setPosition(robotState.FlipPosition);
+            armFlipServo.setPosition(robotState.FlipPosition);
+        }
 
         robotState.SlideMotorLocation = slideMotor.getCurrentPosition();
     }
@@ -114,6 +144,10 @@ public class Intake2 extends Subsystem {
 
             robotState.FlipPosition = Math.min(.80, Math.max(.3, robotState.FlipPosition));
             lastUpdate = System.currentTimeMillis();
+        }
+
+        if (autoFoldArmIn) {
+            robotState.AutoFoldInArm = true;
         }
     }
 }

@@ -1,6 +1,6 @@
 package edu.edina.library.util;
 
-public enum LatchServoPosition {
+public enum ClawServoPosition {
     Open,
     Closed
 }

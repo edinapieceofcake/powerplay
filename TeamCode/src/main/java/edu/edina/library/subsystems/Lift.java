@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import edu.edina.library.util.LatchServoPosition;
+import edu.edina.library.util.ClawServoPosition;
 import edu.edina.library.util.PoleLocation;
 import edu.edina.library.util.RobotState;
 
@@ -36,13 +34,13 @@ public class Lift extends Subsystem {
 
         armPosition = 1;
         lastUpdate = System.currentTimeMillis();
-        robotState.LatchServoPosition = LatchServoPosition.Closed;
+        robotState.ClawServoPosition = ClawServoPosition.Closed;
         this.robotState = robotState;
     }
 
     @Override
     public void update() {
-        if (robotState.LatchServoPosition == LatchServoPosition.Open) {
+        if (robotState.ClawServoPosition == ClawServoPosition.Open) {
             latchServo.setPosition(.8);
         } else {
             latchServo.setPosition(.6);
@@ -69,9 +67,9 @@ public class Lift extends Subsystem {
         }
 
         if (latchOpen) {
-            robotState.LatchServoPosition = LatchServoPosition.Open;
+            robotState.ClawServoPosition = ClawServoPosition.Open;
         } else {
-            robotState.LatchServoPosition = LatchServoPosition.Closed;
+            robotState.ClawServoPosition = ClawServoPosition.Closed;
         }
 
         if (lowPole) {
