@@ -39,6 +39,7 @@ public class Intake2 extends Subsystem {
     private boolean foldingArmInRunning = false;
     private boolean atConeDrop = false;
     private boolean droppedOffCone = false;
+    private boolean slidOut = false;
     private long droppedOffTime = 0;
 
     private int originalArmPosition;
@@ -83,12 +84,19 @@ public class Intake2 extends Subsystem {
                 if (diff < 10) {
                     atConeDrop = true;
                     clampServo.setPosition(1);
-                    robotState.IntakeClampOpen = true;
+                    robotState.IntakeClampOpen = false;
                     droppedOffTime = System.currentTimeMillis();
                     droppedOffCone = false;
                 }
             } else if (!droppedOffCone) {
-                if (System.currentTimeMillis() > (droppedOffTime + 2000)) {
+                if (System.currentTimeMillis() > (droppedOffTime + 1000)) {
+                    slideMotor.setTargetPosition(600);
+                    slidOut = false;
+                    droppedOffCone = true;
+                }
+            } else if (!slidOut) {
+                int diff = Math.abs(Math.abs(slideMotor.getCurrentPosition()) - 600);
+                if (diff < 10) {
                     robotState.FlipPosition = .45;
                     armFlipServo.setPosition(robotState.FlipPosition);
                     slideMotor.setPower(0);

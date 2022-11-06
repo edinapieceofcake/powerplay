@@ -19,15 +19,12 @@ public class RobotState {
     public boolean AutoFoldInArm = false;
     public boolean AutoFoldOutArm = false;
     public boolean DroppedOffCone = false;
-    public long IntakeDiff;
-    public long SlideDiff;
     public long DroppedOfftime;
     public boolean IntakeClampOpen;
     public double FlipPosition = 0.45;
 
     public double LatchServoLocation = 0;
-    public double LiftArmServoLocation = 0;
-    public double LiftSpeed = 0;
+    public long LiftDiff;
     public long LiftMotorLocation = 0;
     public ClawServoPosition ClawServoPosition = edu.edina.library.util.ClawServoPosition.Closed;
     public ElbowServoPosition ElbowServoPosition = edu.edina.library.util.ElbowServoPosition.In;
@@ -47,8 +44,6 @@ public class RobotState {
         if (IntakeSuccessfullySetup) {
             telemetry.addData("Slide Position", SlideMotorLocation);
             telemetry.addData("Folding Arm In", AutoFoldInArm);
-            telemetry.addData("Slide Diff", SlideDiff);
-            telemetry.addData("Intake Diff", IntakeDiff);
             telemetry.addData("Dropped off time", DroppedOfftime);
             telemetry.addData("Dropped off cone", DroppedOffCone);
             telemetry.addData("IntakeClampOpen", IntakeClampOpen);
@@ -62,6 +57,7 @@ public class RobotState {
             telemetry.addData("ClawPosition", ClawPosition);
             telemetry.addData("ElbowPosition", ElbowPosition);
             telemetry.addData("LiftFlipPosition", LiftFlipPosition);
+            telemetry.addData("LiftDiff", LiftDiff);
         } else {
             telemetry.addData("Unable to setup motors liftMotor or setup servos armServo or latchServo", "");
         }

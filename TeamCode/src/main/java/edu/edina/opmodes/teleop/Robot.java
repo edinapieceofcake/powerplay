@@ -1,15 +1,12 @@
 package edu.edina.opmodes.teleop;
 
-import edu.edina.library.subsystems.Intake;
 import edu.edina.library.subsystems.Intake2;
-import edu.edina.library.subsystems.Lift;
 import edu.edina.library.subsystems.Lift2;
 import edu.edina.library.subsystems.MecanumDrive;
 import edu.edina.library.subsystems.Subsystem;
 import edu.edina.library.util.RobotState;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ThreadPool;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
