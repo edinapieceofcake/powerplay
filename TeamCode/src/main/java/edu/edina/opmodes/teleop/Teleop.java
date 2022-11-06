@@ -4,8 +4,8 @@ import edu.edina.library.util.Stickygamepad;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "BlueTeleop", group = "teleop")
-public class BlueTeleop extends OpMode {
+@TeleOp(name = "Teleop", group = "teleop")
+public class Teleop extends OpMode {
     private Robot robot;
     private Stickygamepad _gamepad1;
     private Stickygamepad _gamepad2;

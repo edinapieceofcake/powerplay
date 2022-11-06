@@ -19,13 +19,18 @@
  * SOFTWARE.
  */
 
-package edu.edina.opmodes.test;
+package edu.edina.opmodes.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -35,9 +40,8 @@ import java.util.ArrayList;
 
 import edu.edina.library.vision.AprilTagDetectionPipeline;
 
-@TeleOp
-@Disabled
-public class AprilTagDemo extends LinearOpMode
+@Autonomous
+public class PickMe extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -55,6 +59,7 @@ public class AprilTagDemo extends LinearOpMode
 
     // UNITS ARE METERS
     double tagsize = 0.166;
+    int detectionId = 6; // middle
 
     int numFramesWithoutDetection = 0;
 
@@ -86,11 +91,30 @@ public class AprilTagDemo extends LinearOpMode
             }
         });
 
-        waitForStart();
-
         telemetry.setMsTransmissionInterval(50);
 
-        while (opModeIsActive())
+        DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        Servo liftFlipServo = hardwareMap.get(Servo.class, "liftFlipServo");
+        Servo elbowServo = hardwareMap.get(Servo.class, "elbowServo");
+        Servo clawServo = hardwareMap.get(Servo.class, "clawServo");
+        Servo clampServo = hardwareMap.get(Servo.class, "clampServo");
+        Servo armFlipServo = hardwareMap.get(Servo.class, "armFlipServo");
+
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        clawServo.setPosition(.55);
+        elbowServo.setPosition(.6);
+        liftFlipServo.setPosition(.6);
+        clampServo.setPosition(1);
+        armFlipServo.setPosition(.45);
+
+        /*
+         * The INIT-loop:
+         * This REPLACES waitForStart!
+         */
+        while (!isStarted() && !isStopRequested())
         {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
@@ -131,6 +155,7 @@ public class AprilTagDemo extends LinearOpMode
 
                     for(AprilTagDetection detection : detections)
                     {
+                        detectionId = detection.id;
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
                         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
                         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
@@ -146,5 +171,29 @@ public class AprilTagDemo extends LinearOpMode
 
             sleep(20);
         }
+
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        TrajectorySequence trajectory = null;
+
+        if (detectionId == 3) {
+            trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                    .back(28)
+                    .strafeRight(22)
+                    .build();
+        } else if (detectionId == 6) {
+            trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                    .back(28)
+                    .build();
+        } else {
+            trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                    .back(28)
+                    .strafeLeft(22)
+                    .build();
+        }
+
+        drive.followTrajectorySequence(trajectory);
+
+        while (opModeIsActive()) {sleep(20);}
     }
 }
