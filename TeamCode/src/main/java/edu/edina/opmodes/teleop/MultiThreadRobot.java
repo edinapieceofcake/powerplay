@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-public class Robot {
+public class MultiThreadRobot {
     private ExecutorService subsystemUpdateExecutor;
     private boolean started;
 
@@ -39,6 +39,8 @@ public class Robot {
                         this.telemetry.update();
                     }
                 }
+
+                Thread.sleep(20);
             } catch (Throwable t) {
                 this.telemetry.addData("Exception running thread 2", "");
                 this.telemetry.update();
@@ -46,7 +48,7 @@ public class Robot {
         }
     };
 
-    public Robot(OpMode opMode, Telemetry telemetry) {
+    public MultiThreadRobot(OpMode opMode, Telemetry telemetry) {
         this.telemetry = telemetry;
 
         subsystems = new ArrayList<>();
@@ -54,16 +56,17 @@ public class Robot {
         try {
             drive = new MecanumDrive(opMode.hardwareMap, robotState);
             subsystems.add(drive);
-
         } catch (IllegalArgumentException e) {
 
         }
+
         try {
             lift = new Lift2(opMode.hardwareMap, robotState);
             subsystems.add(lift);
         } catch (IllegalArgumentException e){
 
         }
+
         try {
             intake = new Intake2(opMode.hardwareMap, robotState);
             subsystems.add(intake);

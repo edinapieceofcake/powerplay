@@ -1,12 +1,13 @@
 package edu.edina.opmodes.teleop;
 
-import edu.edina.library.util.Stickygamepad;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Teleop", group = "teleop")
-public class Teleop extends OpMode {
-    private Robot robot;
+import edu.edina.library.util.Stickygamepad;
+
+@TeleOp(name = "NoThreadTeleop", group = "teleop")
+public class NoThreadTeleop extends OpMode {
+    private NoThreadRobot robot;
     private Stickygamepad _gamepad1;
     private Stickygamepad _gamepad2;
 
@@ -14,8 +15,7 @@ public class Teleop extends OpMode {
     public void init() {
         _gamepad1 = new Stickygamepad(gamepad1);
         _gamepad2 = new Stickygamepad(gamepad2);
-        robot = new Robot(this, telemetry);
-        robot.start();
+        robot = new NoThreadRobot(this, telemetry);
     }
 
     @Override
@@ -39,11 +39,13 @@ public class Teleop extends OpMode {
                 (gamepad1.right_trigger != 0), gamepad1.right_bumper, gamepad1.left_bumper,
                 _gamepad1.a, _gamepad1.y);
 
+        robot.update();
+
         robot.telemetry();
     }
 
     @Override
     public  void stop() {
-        robot.stop();
+
     }
 }

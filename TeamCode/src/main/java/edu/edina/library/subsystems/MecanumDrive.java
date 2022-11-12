@@ -20,6 +20,8 @@ public class MecanumDrive extends Subsystem{
     private Motor backLeft;
     private Motor backRight;
 
+    private boolean speedChanged = false;
+
     private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
 
     public MecanumDrive(HardwareMap map, RobotState robotState){
@@ -30,6 +32,7 @@ public class MecanumDrive extends Subsystem{
             backRight = new Motor(map, "rightRear", Motor.GoBILDA.RPM_312);
 
             drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
+            drive.setMaxSpeed(1.3);
             robotState.DriveSpeed = DriveSpeed.Low;
             robotState.DriveSuccessfullySetup = true;
         } catch (Exception ex) {
@@ -41,7 +44,7 @@ public class MecanumDrive extends Subsystem{
 
     @Override
     public void update() {
-        if (robotState.DriveSuccessfullySetup) {
+        if (speedChanged) {
             if (robotState.DriveSpeed == DriveSpeed.Fast) {
                 drive.setMaxSpeed(1.3);
             } else if (robotState.DriveSpeed == DriveSpeed.Low) {
@@ -50,8 +53,10 @@ public class MecanumDrive extends Subsystem{
                 drive.setMaxSpeed(1);
             }
 
-            drive.driveRobotCentric(-leftStickX, leftStickY, -rightstickX);
+            speedChanged = false;
         }
+
+        drive.driveRobotCentric(-leftStickX, leftStickY, -rightstickX);
     }
 
     public void setDriveProperties(double leftStickX, double leftStickY, double rightStickX,
@@ -62,10 +67,13 @@ public class MecanumDrive extends Subsystem{
 
         if (driveSlow) {
             robotState.DriveSpeed = DriveSpeed.Low;
+            speedChanged = true;
         } else if (driveMedium) {
             robotState.DriveSpeed = DriveSpeed.Medium;
+            speedChanged = true;
         } else if (driveFast) {
             robotState.DriveSpeed = DriveSpeed.Fast;
+            speedChanged = true;
         }
     }
 }
