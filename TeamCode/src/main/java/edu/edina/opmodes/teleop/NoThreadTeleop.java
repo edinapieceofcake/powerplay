@@ -22,6 +22,7 @@ public class NoThreadTeleop extends OpMode {
     public void start() {
     }
 
+    @Override
     public void loop() {
 
         _gamepad1.update();

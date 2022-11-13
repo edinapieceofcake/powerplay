@@ -49,6 +49,12 @@ public class Intake2 extends Subsystem {
             slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+            robotState.FlipPosition = MIDDLEPOSITION;
+            armFlipServo.setPosition(robotState.FlipPosition);
+
+            robotState.IntakeClampOpen = false;
+            clampServo.setPosition(1);
+
             robotState.IntakeSuccessfullySetup = true;
         } catch (Exception ex) {
             robotState.IntakeSuccessfullySetup = false;

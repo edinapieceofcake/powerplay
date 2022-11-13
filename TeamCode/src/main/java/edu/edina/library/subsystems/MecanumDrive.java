@@ -32,7 +32,7 @@ public class MecanumDrive extends Subsystem{
             backRight = new Motor(map, "rightRear", Motor.GoBILDA.RPM_312);
 
             drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
-            drive.setMaxSpeed(1.3);
+            drive.setMaxSpeed(.5);
             robotState.DriveSpeed = DriveSpeed.Low;
             robotState.DriveSuccessfullySetup = true;
         } catch (Exception ex) {

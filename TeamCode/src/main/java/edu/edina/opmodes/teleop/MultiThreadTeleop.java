@@ -10,7 +10,7 @@ public class MultiThreadTeleop extends OpMode {
     private Stickygamepad _gamepad1;
     private Stickygamepad _gamepad2;
 
-
+    @Override
     public void init() {
         _gamepad1 = new Stickygamepad(gamepad1);
         _gamepad2 = new Stickygamepad(gamepad2);
@@ -22,6 +22,7 @@ public class MultiThreadTeleop extends OpMode {
     public void start() {
     }
 
+    @Override
     public void loop() {
 
         _gamepad1.update();

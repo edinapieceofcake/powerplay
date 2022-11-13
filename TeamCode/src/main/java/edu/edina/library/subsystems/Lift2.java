@@ -21,7 +21,7 @@ public class Lift2 extends Subsystem {
     private static double CLAWOPENPOSITION = 0.47;
     private static double CLAWCLOSEDPOSITION = 0.55;
 
-    private static double ELBOWINPOSIITION = 0.73;
+    private static double ELBOWINPOSITION = 0.73;
     private static int ELBOWINPOSITION100 = 73;
     private static double ELBOWOUTPOSITION = .6;
     private static int ELBOWOUTPOSITION100 = 60;
@@ -100,7 +100,7 @@ public class Lift2 extends Subsystem {
                 } else if (!atPosition) {
                     if ((System.currentTimeMillis() > (returnStartedTime + ARMFLIPWAITTIME)) && (Math.round(liftFlipServo.getPosition() * 100) == LIFTPICKUPPOSITION100)) {
                         atPosition = true;
-                        elbowServo.setPosition(ELBOWINPOSIITION);
+                        elbowServo.setPosition(ELBOWINPOSITION);
                         robotState.ElbowServoPosition = ElbowServoPosition.In;
                         armReady = false;
                         returnStartedTime = System.currentTimeMillis();
@@ -152,7 +152,8 @@ public class Lift2 extends Subsystem {
                 } else if (!armReady) {
                     liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
                     robotState.LiftFilpServoPosition = LiftFilpServoPosition.DropOff;
-
+                    armReady = true;
+                } else {
                     if (robotState.ClawServoPosition == ClawServoPosition.Open) {
                         clawServo.setPosition(CLAWOPENPOSITION);
                     } else if (robotState.ClawServoPosition == ClawServoPosition.Closed) {
@@ -168,7 +169,7 @@ public class Lift2 extends Subsystem {
             }
 
             if (robotState.ElbowServoPosition == ElbowServoPosition.In) {
-                elbowServo.setPosition(ELBOWINPOSIITION);
+                elbowServo.setPosition(ELBOWINPOSITION);
             } else if (robotState.ElbowServoPosition == ElbowServoPosition.Out) {
                 elbowServo.setPosition(ELBOWOUTPOSITION);
             }

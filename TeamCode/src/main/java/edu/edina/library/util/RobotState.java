@@ -8,22 +8,13 @@ public class RobotState {
     public DriveSpeed DriveSpeed = edu.edina.library.util.DriveSpeed.Medium;
 
     public long SlideMotorLocation = 0;
-    public long IntakeMotorLocation = 0;
-    public double SlideArmServoLocation = 0;
-    public boolean SlideIntakeSwitch = false;
-    public boolean SlideSwitch = false;
-    public boolean ArmSwitch = false;
     public SlideMotorAction SlideMotorAction = edu.edina.library.util.SlideMotorAction.Idle;
-    public IntakeServoAction IntakeServoAction = edu.edina.library.util.IntakeServoAction.Idle;
-    public SlideArmMotorAction SlideArmMotorAction = edu.edina.library.util.SlideArmMotorAction.Idle;
     public boolean AutoFoldInArm = false;
-    public boolean AutoFoldOutArm = false;
     public boolean DroppedOffCone = false;
     public long DroppedOfftime;
     public boolean IntakeClampOpen;
     public double FlipPosition = 0.45;
 
-    public double LatchServoLocation = 0;
     public long LiftDiff;
     public long LiftMotorLocation = 0;
     public ClawServoPosition ClawServoPosition = edu.edina.library.util.ClawServoPosition.Closed;
