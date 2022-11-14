@@ -172,6 +172,12 @@ public class PickMe extends LinearOpMode
             sleep(20);
         }
 
+        camera.closeCameraDeviceAsync(new OpenCvCamera.AsyncCameraCloseListener() {
+            @Override
+            public void onClose() {
+
+            }
+        });
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         TrajectorySequence trajectory = null;

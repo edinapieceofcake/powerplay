@@ -98,6 +98,7 @@ public class Intake2 extends Subsystem {
                     slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     robotState.AutoFoldInArm = false;
                     foldingArmInRunning = false;
+                    slidOut = true;
                 }
             }
         } else {

@@ -10,8 +10,6 @@ public class RobotState {
     public long SlideMotorLocation = 0;
     public SlideMotorAction SlideMotorAction = edu.edina.library.util.SlideMotorAction.Idle;
     public boolean AutoFoldInArm = false;
-    public boolean DroppedOffCone = false;
-    public long DroppedOfftime;
     public boolean IntakeClampOpen;
     public double FlipPosition = 0.45;
 
@@ -35,8 +33,6 @@ public class RobotState {
         if (IntakeSuccessfullySetup) {
             telemetry.addData("Slide Position", SlideMotorLocation);
             telemetry.addData("Folding Arm In", AutoFoldInArm);
-            telemetry.addData("Dropped off time", DroppedOfftime);
-            telemetry.addData("Dropped off cone", DroppedOffCone);
             telemetry.addData("IntakeClampOpen", IntakeClampOpen);
             telemetry.addData("FlipPosition", FlipPosition);
         } else {
