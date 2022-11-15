@@ -1,7 +1,5 @@
 package edu.edina.library.subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -13,7 +11,6 @@ import edu.edina.library.util.RobotState;
 import edu.edina.library.util.SlideArmMotorAction;
 import edu.edina.library.util.SlideMotorAction;
 
-@Config
 public class Intake2 extends Subsystem {
     public static int TRANSFERSLIDEPOSITION = 570;
     public static int MIDDLESLIDEPOSITION = 600;
@@ -26,6 +23,8 @@ public class Intake2 extends Subsystem {
     public static int INCREMENTTIMEOUT = 25;
 
     public static int DROPOFFTIMEOUT = 1000;
+
+    public static double CLOSEPOSITION = 0.5;
 
     private DcMotorEx slideMotor;
     private Servo clampServo;
@@ -60,7 +59,7 @@ public class Intake2 extends Subsystem {
             armFlipServo.setPosition(robotState.FlipPosition);
 
             robotState.IntakeClampOpen = false;
-            clampServo.setPosition(0);
+            clampServo.setPosition(CLOSEPOSITION);
 
             robotState.IntakeSuccessfullySetup = true;
         } catch (Exception ex) {
@@ -108,6 +107,8 @@ public class Intake2 extends Subsystem {
                     robotState.AutoFoldInArm = false;
                     foldingArmInRunning = false;
                     slidOut = true;
+                    clampServo.setPosition(CLOSEPOSITION);
+                    robotState.IntakeClampOpen = false;
                 }
             }
         } else {
@@ -123,7 +124,7 @@ public class Intake2 extends Subsystem {
             if (robotState.IntakeClampOpen) {
                 clampServo.setPosition(1);
             } else {
-                clampServo.setPosition(0);
+                clampServo.setPosition(CLOSEPOSITION);
             }
 
             armFlipServo.setPosition(robotState.FlipPosition);

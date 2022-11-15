@@ -1,6 +1,5 @@
 package edu.edina.opmodes.test;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,8 +13,7 @@ import edu.edina.library.util.RobotState;
 import edu.edina.library.util.Stickygamepad;
 
 @TeleOp
-@Config
-//@Disabled
+@Disabled
 public class TestIntake extends LinearOpMode {
     public static double MAXFLIPPOSITION = 1;
     public static double MINFLIPPOSITION = 0;

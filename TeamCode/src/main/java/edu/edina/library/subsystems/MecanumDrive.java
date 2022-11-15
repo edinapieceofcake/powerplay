@@ -1,79 +1,93 @@
 package edu.edina.library.subsystems;
 
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import edu.edina.library.util.DriveSpeed;
+import java.util.Arrays;
+import java.util.Collections;
+
 import edu.edina.library.util.RobotState;
 
 public class MecanumDrive extends Subsystem{
 
+    private DcMotorEx[] motors;
+    public static final String[] MOTOR_NAMES = {"leftFront", "leftRear", "rightRear", "rightFront"};
+    private double[] powers;
     private double leftStickX;
     private double leftStickY;
-    private double rightstickX;
-    private RobotState robotState;
-    private Motor frontLeft;
-    private Motor frontRight;
-    private Motor backLeft;
-    private Motor backRight;
+    private double rightStickY;
+    private double driveStickSpeed = .8;
+    private double rotationStickSpeed = .8;
 
-    private boolean speedChanged = false;
+    private double currentPower = 1;
 
-    private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
+    public MecanumDrive(HardwareMap map, RobotState robotState) {
+        powers = new double[4];
+        motors = new DcMotorEx[4];
 
-    public MecanumDrive(HardwareMap map, RobotState robotState){
         try {
-            frontLeft = new Motor(map, "leftFront", Motor.GoBILDA.RPM_312);
-            frontRight = new Motor(map, "rightFront", Motor.GoBILDA.RPM_312);
-            backLeft = new Motor(map, "leftRear", Motor.GoBILDA.RPM_312);
-            backRight = new Motor(map, "rightRear", Motor.GoBILDA.RPM_312);
+            for (int i = 0; i < 4; i ++) {
+                DcMotorEx dcMotor = map.get(DcMotorEx.class, MOTOR_NAMES[i]);
+                motors[i] = dcMotor;
+                motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motors[i].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }
 
-            drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, backLeft, backRight);
-            drive.setMaxSpeed(.5);
-            robotState.DriveSpeed = DriveSpeed.Low;
+            motors[2].setDirection(DcMotorSimple.Direction.REVERSE);
+            motors[3].setDirection(DcMotorSimple.Direction.REVERSE);
             robotState.DriveSuccessfullySetup = true;
         } catch (Exception ex) {
             robotState.DriveSuccessfullySetup = false;
         }
-
-        this.robotState = robotState;
     }
 
-    @Override
-    public void update() {
-        if (speedChanged) {
-            if (robotState.DriveSpeed == DriveSpeed.Fast) {
-                drive.setMaxSpeed(1.3);
-            } else if (robotState.DriveSpeed == DriveSpeed.Low) {
-                drive.setMaxSpeed(0.5);
-            } else {
-                drive.setMaxSpeed(1);
-            }
-
-            speedChanged = false;
-        }
-
-        drive.driveRobotCentric(-leftStickX, leftStickY, -rightstickX);
-    }
-
-    public void setDriveProperties(double leftStickX, double leftStickY, double rightStickX,
-                                   boolean driveSlow, boolean driveMedium, boolean driveFast) {
+    public void setDriveProperties(double leftStickX, double leftStickY, double rightStickY,
+                                   boolean lowSpeed, boolean mediumSpeed, boolean highSpeed) {
         this.leftStickX = leftStickX;
         this.leftStickY = leftStickY;
-        this.rightstickX = rightStickX;
+        this.rightStickY = rightStickY;
 
-        if (driveSlow) {
-            robotState.DriveSpeed = DriveSpeed.Low;
-            speedChanged = true;
-        } else if (driveMedium) {
-            robotState.DriveSpeed = DriveSpeed.Medium;
-            speedChanged = true;
-        } else if (driveFast) {
-            robotState.DriveSpeed = DriveSpeed.Fast;
-            speedChanged = true;
+        if (lowSpeed) {
+            currentPower = .5;
+        } else if (mediumSpeed) {
+            currentPower = 1.0;
+        } else if (highSpeed) {
+            currentPower = 1.4;
+        }
+    }
+
+    public void update() {
+        double x;
+        double y;
+        double rotation;
+        double speed;
+
+        x = Math.pow(-leftStickX, 3.0);
+        y = Math.pow(leftStickY, 3.0);
+        rotation = Math.pow(-rightStickY, 3.0) * rotationStickSpeed;
+        speed = Math.min(1.0, Math.sqrt(x * x + y * y)) * driveStickSpeed;
+
+        final double direction = Math.atan2(x, y);
+
+        powers[0] = (speed * Math.sin(direction + Math.PI / 4.0) + rotation) * currentPower;
+        powers[3] = (speed * Math.cos(direction + Math.PI / 4.0) - rotation) * currentPower;
+        powers[1] = (speed * Math.cos(direction + Math.PI / 4.0) + rotation) * currentPower;
+        powers[2] = (speed * Math.sin(direction + Math.PI / 4.0) - rotation) * currentPower;
+
+        double max = Collections.max(Arrays.asList(1.0, Math.abs(powers[0]),
+                Math.abs(powers[1]), Math.abs(powers[2]), Math.abs(powers[3])));
+
+        for (int i = 0; i < 4; i++) {
+            powers[i] /= max;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            motors[i].setPower(powers[i]);
         }
     }
 }

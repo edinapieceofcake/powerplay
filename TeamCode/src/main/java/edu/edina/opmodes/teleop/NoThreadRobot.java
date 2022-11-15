@@ -26,12 +26,7 @@ public class NoThreadRobot {
     public void update() {
         for (Subsystem subsystem : subsystems) {
             if (subsystem == null) continue;
-            try {
                 subsystem.update();
-            } catch (Throwable t) {
-                this.telemetry.addData("updating systems", "");
-                this.telemetry.update();
-            }
         }
     }
 
@@ -40,30 +35,19 @@ public class NoThreadRobot {
 
         subsystems = new ArrayList<>();
 
-        try {
-            drive = new MecanumDrive(opMode.hardwareMap, robotState);
-            subsystems.add(drive);
-        } catch (IllegalArgumentException e) {
+        drive = new MecanumDrive(opMode.hardwareMap, robotState);
+        subsystems.add(drive);
 
-        }
+        lift = new Lift2(opMode.hardwareMap, robotState);
+        subsystems.add(lift);
 
-        try {
-            lift = new Lift2(opMode.hardwareMap, robotState);
-            subsystems.add(lift);
-        } catch (IllegalArgumentException e){
-
-        }
-
-        try {
-            intake = new Intake2(opMode.hardwareMap, robotState);
-            subsystems.add(intake);
-        } catch (IllegalArgumentException e){
-
-        }
+        intake = new Intake2(opMode.hardwareMap, robotState);
+        subsystems.add(intake);
     }
 
     public void telemetry()
     {
         robotState.telemetry(telemetry);
+        telemetry.update();
     }
 }

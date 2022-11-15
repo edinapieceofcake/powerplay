@@ -107,7 +107,7 @@ public class PickMe extends LinearOpMode
         clawServo.setPosition(.55);
         elbowServo.setPosition(.6);
         liftFlipServo.setPosition(.6);
-        clampServo.setPosition(1);
+        clampServo.setPosition(.5);
         armFlipServo.setPosition(.45);
 
         /*

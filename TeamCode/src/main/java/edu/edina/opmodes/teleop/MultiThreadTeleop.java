@@ -1,10 +1,13 @@
 package edu.edina.opmodes.teleop;
 
 import edu.edina.library.util.Stickygamepad;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "MultiThreadTeleop", group = "teleop")
+@Disabled
 public class MultiThreadTeleop extends OpMode {
     private MultiThreadRobot robot;
     private Stickygamepad _gamepad1;
