@@ -15,12 +15,12 @@ import edu.edina.library.util.SlideMotorAction;
 
 @Config
 public class Intake2 extends Subsystem {
-    public static int TRANSFERSLIDEPOSITION = 580;
+    public static int TRANSFERSLIDEPOSITION = 570;
     public static int MIDDLESLIDEPOSITION = 600;
 
-    public static double MAXFLIPPOSITION = .8;
+    public static double MAXFLIPPOSITION = .87;
     public static double MINFLIPPOSITION = .3;
-    public static double TRANSFERPOSITION = .25;
+    public static double TRANSFERPOSITION = .30;
     public static double MIDDLEPOSITION = .45;
     public static double INCREMENTFLIP = .05;
     public static int INCREMENTTIMEOUT = 25;
@@ -30,6 +30,7 @@ public class Intake2 extends Subsystem {
     private DcMotorEx slideMotor;
     private Servo clampServo;
     private Servo armFlipServo;
+    private DigitalChannel slideSwitch;
     private RobotState robotState;
     private long lastUpdate;
 
@@ -39,11 +40,17 @@ public class Intake2 extends Subsystem {
     private boolean slidOut = false;
     private long droppedOffTime = 0;
 
+    private boolean slideMotorReset = false;
+
     public Intake2(HardwareMap map, RobotState robotState){
         try {
             slideMotor = map.get(DcMotorEx.class, "slideMotor");
             clampServo = map.get(Servo.class, "clampServo");
             armFlipServo = map.get(Servo.class, "armFlipServo");
+            slideSwitch = map.get(DigitalChannel.class, "slideSwitch");
+
+            // set the digital channel to input.
+            slideSwitch.setMode(DigitalChannel.Mode.INPUT);
 
             slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -53,7 +60,7 @@ public class Intake2 extends Subsystem {
             armFlipServo.setPosition(robotState.FlipPosition);
 
             robotState.IntakeClampOpen = false;
-            clampServo.setPosition(1);
+            clampServo.setPosition(0);
 
             robotState.IntakeSuccessfullySetup = true;
         } catch (Exception ex) {
@@ -72,14 +79,16 @@ public class Intake2 extends Subsystem {
                 slideMotor.setPower(1);
                 foldingArmInRunning = true;
                 atConeDrop = false;
-                robotState.FlipPosition = TRANSFERPOSITION;
+                robotState.FlipPosition = MIDDLEPOSITION;
                 armFlipServo.setPosition(robotState.FlipPosition);
             } else if (!atConeDrop) {
                 int diff = Math.abs(Math.abs(slideMotor.getCurrentPosition()) - TRANSFERSLIDEPOSITION);
                 if (diff < 10) {
                     atConeDrop = true;
+                    robotState.FlipPosition = TRANSFERPOSITION;
+                    armFlipServo.setPosition(robotState.FlipPosition);
                     clampServo.setPosition(1);
-                    robotState.IntakeClampOpen = false;
+                    robotState.IntakeClampOpen = true;
                     droppedOffTime = System.currentTimeMillis();
                     droppedOffCone = false;
                 }
@@ -112,15 +121,24 @@ public class Intake2 extends Subsystem {
             }
 
             if (robotState.IntakeClampOpen) {
-                clampServo.setPosition(0);
-            } else {
                 clampServo.setPosition(1);
+            } else {
+                clampServo.setPosition(0);
             }
 
             armFlipServo.setPosition(robotState.FlipPosition);
+
+            if (slideSwitch.getState() && !slideMotorReset) {
+                slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                slideMotorReset = true;
+            } else {
+                slideMotorReset = false;
+            }
         }
 
         robotState.SlideMotorLocation = slideMotor.getCurrentPosition();
+        robotState.SlideSwitch = slideSwitch.getState();
     }
 
     public void setIntakeProperties(boolean toggleClamp, boolean slideIn, boolean slideOut,

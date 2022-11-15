@@ -184,17 +184,17 @@ public class PickMe extends LinearOpMode
 
         if (detectionId == 3) {
             trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                    .back(28)
-                    .strafeRight(22)
+                    .back(27)
+                    .strafeRight(23)
                     .build();
         } else if (detectionId == 6) {
             trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                    .back(28)
+                    .back(27)
                     .build();
         } else {
             trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
                     .back(28)
-                    .strafeLeft(22)
+                    .strafeLeft(23)
                     .build();
         }
 

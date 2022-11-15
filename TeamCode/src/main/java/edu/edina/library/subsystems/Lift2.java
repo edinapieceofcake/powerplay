@@ -2,6 +2,7 @@ package edu.edina.library.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,13 +22,13 @@ public class Lift2 extends Subsystem {
     private static double CLAWOPENPOSITION = 0.47;
     private static double CLAWCLOSEDPOSITION = 0.55;
 
-    private static double ELBOWINPOSITION = 0.73;
-    private static int ELBOWINPOSITION100 = 73;
+    private static double ELBOWINPOSITION = 0.74;
+    private static int ELBOWINPOSITION100 = 74;
     private static double ELBOWOUTPOSITION = .6;
     private static int ELBOWOUTPOSITION100 = 60;
 
-    private static double LIFTPICKUPPOSITION = .15;
-    private static double LIFTPICKUPPOSITION100 = 15;
+    private static double LIFTPICKUPPOSITION = .12;
+    private static double LIFTPICKUPPOSITION100 = 12;
     private static double LIFTDROPOFFPOSITION = .9;
     private static double LIFTMIDDLEPOSITION = .6;
 
@@ -36,7 +37,7 @@ public class Lift2 extends Subsystem {
     private static int POLEPOSITIONHIGH = -2600;
 
     private static int ARMOUTPOSITION = 200;
-    private static int LIFTRETURNHEiGHT = -180;
+    private static int LIFTRETURNHEiGHT = -170;
 
     private static int ARMFLIPWAITTIME = 750;
     private static int ELBOWINWAITTIME = 750;
@@ -46,6 +47,8 @@ public class Lift2 extends Subsystem {
     private Servo liftFlipServo;
     private Servo elbowServo;
     private Servo clawServo;
+    private DigitalChannel liftSwitch;
+
     private double liftSpeed;
     private long lastUpdate;
     private boolean runningToPosition;
@@ -54,6 +57,7 @@ public class Lift2 extends Subsystem {
     private boolean atZeroPosition;
     private int targetPosition = 0;
     private long returnStartedTime = 0;
+    private boolean liftMotorReset = false;
 
     public Lift2(HardwareMap map, RobotState robotState) {
         try {
@@ -61,6 +65,10 @@ public class Lift2 extends Subsystem {
             liftFlipServo = map.get(Servo.class, "liftFlipServo");
             elbowServo = map.get(Servo.class, "elbowServo");
             clawServo = map.get(Servo.class, "clawServo");
+            liftSwitch = map.get(DigitalChannel.class, "liftSwitch");
+
+            // set the digital channel to input.
+            liftSwitch.setMode(DigitalChannel.Mode.INPUT);
 
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -182,6 +190,14 @@ public class Lift2 extends Subsystem {
                 liftFlipServo.setPosition(LIFTMIDDLEPOSITION);
             }
 
+            if (liftSwitch.getState() && !liftMotorReset) {
+                liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                liftMotorReset = true;
+            } else {
+                liftMotorReset = false;
+            }
+
             liftMotor.setPower(liftSpeed);
         }
 
@@ -189,6 +205,7 @@ public class Lift2 extends Subsystem {
         robotState.ClawPosition = Math.round(clawServo.getPosition() * 100);
         robotState.ElbowPosition = Math.round(elbowServo.getPosition() * 100);
         robotState.LiftFlipPosition = Math.round(liftFlipServo.getPosition() * 100);
+        robotState.LiftSwitch = liftSwitch.getState();
     }
 
     public void setLiftProperties(double liftSpeed, boolean elbowOpen, boolean elbowClosed,

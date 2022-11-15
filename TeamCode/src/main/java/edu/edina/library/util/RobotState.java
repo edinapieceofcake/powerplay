@@ -12,6 +12,7 @@ public class RobotState {
     public boolean AutoFoldInArm = false;
     public boolean IntakeClampOpen;
     public double FlipPosition = 0.45;
+    public boolean SlideSwitch = false;
 
     public long LiftDiff;
     public long LiftMotorLocation = 0;
@@ -22,6 +23,7 @@ public class RobotState {
     public double ClawPosition = 0.0;
     public double ElbowPosition = 0.0;
     public double LiftFlipPosition = 0.0;
+    public boolean LiftSwitch = false;
 
     public boolean IntakeSuccessfullySetup = false;
     public boolean LiftSuccessfullySetup = false;
@@ -35,6 +37,7 @@ public class RobotState {
             telemetry.addData("Folding Arm In", AutoFoldInArm);
             telemetry.addData("IntakeClampOpen", IntakeClampOpen);
             telemetry.addData("FlipPosition", FlipPosition);
+            telemetry.addData("SlideSwitch", SlideSwitch);
         } else {
             telemetry.addData("Unable to setup motors slideMotor or flipMotor or setup servos flipServo or intakeServo", "");
         }
@@ -45,6 +48,7 @@ public class RobotState {
             telemetry.addData("ElbowPosition", ElbowPosition);
             telemetry.addData("LiftFlipPosition", LiftFlipPosition);
             telemetry.addData("LiftDiff", LiftDiff);
+            telemetry.addData("LiftSwitch", LiftSwitch);
         } else {
             telemetry.addData("Unable to setup motors liftMotor or setup servos armServo or latchServo", "");
         }

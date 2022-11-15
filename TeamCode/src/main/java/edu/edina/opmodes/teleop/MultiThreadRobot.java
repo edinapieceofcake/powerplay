@@ -39,8 +39,6 @@ public class MultiThreadRobot {
                         this.telemetry.update();
                     }
                 }
-
-                Thread.sleep(20);
             } catch (Throwable t) {
                 this.telemetry.addData("Exception running thread 2", "");
                 this.telemetry.update();

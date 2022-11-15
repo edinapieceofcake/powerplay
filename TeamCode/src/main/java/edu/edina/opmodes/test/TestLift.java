@@ -10,11 +10,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import edu.edina.library.util.Stickygamepad;
 
 @TeleOp()
-@Disabled
+//@Disabled
 public class TestLift extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Stickygamepad pad1 = new Stickygamepad(gamepad1);
+        Stickygamepad pad2 = new Stickygamepad(gamepad2);
         DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         Servo liftFlipServo = hardwareMap.get(Servo.class, "liftFlipServo");
         Servo elbowServo = hardwareMap.get(Servo.class, "elbowServo");
@@ -23,38 +23,40 @@ public class TestLift extends LinearOpMode {
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        elbowServo.setPosition(0);
-        clawServo.setPosition(0);
+        elbowServo.setPosition(.6);
+        clawServo.setPosition(0.55);
+        liftFlipServo.setPosition(.6);
+
         waitForStart();
 
         while(opModeIsActive()){
-            pad1.update();
+            pad2.update();
 
-            if (pad1.dpad_left){
+            if (pad2.dpad_left){
                 elbowServo.setPosition(elbowServo.getPosition()+0.05);
             }
-            if (pad1.dpad_right){
+            if (pad2.dpad_right){
                 elbowServo.setPosition(elbowServo.getPosition()-0.05);
             }
 
-            if (pad1.right_bumper){
+            if (pad2.right_bumper){
                 clawServo.setPosition(clawServo.getPosition()+0.05);
             }
 
-            if (pad1.left_bumper){
+            if (pad2.left_bumper){
                 clawServo.setPosition(clawServo.getPosition()-0.05);
             }
 
-            if (pad1.dpad_up){
+            if (pad2.dpad_up){
                 liftFlipServo.setPosition(liftFlipServo.getPosition()+0.05);
             }
-            if (pad1.dpad_down){
+            if (pad2.dpad_down){
                 liftFlipServo.setPosition(liftFlipServo.getPosition()-0.05);
             }
 
-            if (gamepad1.right_trigger != 0) {
+            if (gamepad2.right_trigger != 0) {
                 liftMotor.setPower(1);
-            } else if (gamepad1.left_trigger != 0) {
+            } else if (gamepad2.left_trigger != 0) {
                 liftMotor.setPower(-1);
             } else {
                 liftMotor.setPower(0);
