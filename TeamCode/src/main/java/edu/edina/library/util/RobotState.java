@@ -10,6 +10,7 @@ public class RobotState {
     public long SlideMotorLocation = 0;
     public SlideMotorAction SlideMotorAction = edu.edina.library.util.SlideMotorAction.Idle;
     public boolean AutoFoldInArm = false;
+    public boolean AutoFoldOutArm = false;
     public boolean IntakeClampOpen;
     public double FlipPosition = 0.45;
     public boolean SlideSwitch = false;
@@ -24,6 +25,7 @@ public class RobotState {
     public double ElbowPosition = 0.0;
     public double LiftFlipPosition = 0.0;
     public boolean LiftSwitch = false;
+    public boolean LiftReadyForCone = false;
 
     public boolean IntakeSuccessfullySetup = false;
     public boolean LiftSuccessfullySetup = false;
@@ -49,6 +51,7 @@ public class RobotState {
             telemetry.addData("LiftFlipPosition", LiftFlipPosition);
             telemetry.addData("LiftDiff", LiftDiff);
             telemetry.addData("LiftSwitch", LiftSwitch);
+            telemetry.addData("LiftReadyForCone", LiftReadyForCone);
         } else {
             telemetry.addData("Unable to setup motors liftMotor or setup servos armServo or latchServo", "");
         }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import edu.edina.library.util.ClawServoPosition;
 import edu.edina.library.util.IntakeServoAction;
 import edu.edina.library.util.RobotState;
 import edu.edina.library.util.SlideArmMotorAction;
@@ -23,9 +24,13 @@ public class Intake2 extends Subsystem {
     public static int INCREMENTTIMEOUT = 35;
 
     public static int DROPOFFTIMEOUT = 1000;
+    public static int WAITTIMETOOPENCLAW = 250;
+    public static int WAITTIMETOCLOSECLOSE = 350;
 
     public static double CLOSEPOSITION = 0.5;
+    public static int CLOSEPOSITION100 = 50;
     public static double OPENPOSITION = 0.67;
+    public static int OPENPOSITION100 = 67;
 
     private DcMotorEx slideMotor;
     private Servo clampServo;
@@ -34,10 +39,16 @@ public class Intake2 extends Subsystem {
     private RobotState robotState;
     private long lastUpdate;
 
+    private boolean atConePickup;
+    private int lastSlidePosition;
+
     private boolean foldingArmInRunning = false;
+    private boolean foldingArmOutRunning = false;
     private boolean atConeDrop = false;
     private boolean droppedOffCone = false;
     private boolean slidOut = false;
+    private boolean clearToDrop = false;
+    private boolean clawClosed = false;
     private long droppedOffTime = 0;
 
     private boolean slideMotorReset = false;
@@ -74,18 +85,35 @@ public class Intake2 extends Subsystem {
     public void update() {
         if (robotState.AutoFoldInArm) {
             if (!foldingArmInRunning) {
-                slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
-                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                slideMotor.setPower(1);
                 foldingArmInRunning = true;
-                atConeDrop = false;
-                robotState.FlipPosition = TRANSFERPOSITION;
-                armFlipServo.setPosition(robotState.FlipPosition);
+                clawClosed = false;
+                clampServo.setPosition(CLOSEPOSITION);
+                robotState.IntakeClampOpen = false;
+                droppedOffTime = System.currentTimeMillis();
+            } else if (!clawClosed) {
+                if ((System.currentTimeMillis() > lastUpdate + WAITTIMETOCLOSECLOSE) && (Math.round(clampServo.getPosition() * 100) == CLOSEPOSITION100)) {
+                    lastSlidePosition = slideMotor.getCurrentPosition();
+                    slideMotor.setTargetPosition(MIDDLESLIDEPOSITION);
+                    slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    slideMotor.setPower(1);
+                    clearToDrop = false;
+                    clawClosed = true;
+                    robotState.FlipPosition = MIDDLEPOSITION;
+                    armFlipServo.setPosition(robotState.FlipPosition);
+                }
+            } else if (!clearToDrop) {
+                int diff = Math.abs(Math.abs(slideMotor.getCurrentPosition()) - MIDDLESLIDEPOSITION);
+                if ((diff < 10) && robotState.LiftReadyForCone){
+                    slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
+                    clearToDrop = true;
+                    atConeDrop = false;
+                    robotState.FlipPosition = TRANSFERPOSITION;
+                    armFlipServo.setPosition(robotState.FlipPosition);
+                }
             } else if (!atConeDrop) {
                 int diff = Math.abs(Math.abs(slideMotor.getCurrentPosition()) - TRANSFERSLIDEPOSITION);
                 if (diff < 10) {
                     atConeDrop = true;
-                    armFlipServo.setPosition(robotState.FlipPosition);
                     clampServo.setPosition(OPENPOSITION);
                     robotState.IntakeClampOpen = true;
                     droppedOffTime = System.currentTimeMillis();
@@ -102,13 +130,33 @@ public class Intake2 extends Subsystem {
                 if (diff < 10) {
                     robotState.FlipPosition = MIDDLEPOSITION;
                     armFlipServo.setPosition(robotState.FlipPosition);
-                    slideMotor.setPower(0);
-                    slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    robotState.AutoFoldInArm = false;
-                    foldingArmInRunning = false;
-                    slidOut = true;
+                    resetState();
                     clampServo.setPosition(CLOSEPOSITION);
                     robotState.IntakeClampOpen = false;
+                }
+            }
+        } else if (robotState.AutoFoldOutArm) {
+            if (!foldingArmOutRunning) {
+                slideMotor.setTargetPosition(lastSlidePosition);
+                slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                slideMotor.setPower(1);
+                foldingArmOutRunning = true;
+                atConePickup = false;
+                robotState.FlipPosition = MAXFLIPPOSITION;
+                armFlipServo.setPosition(robotState.FlipPosition);
+                clampServo.setPosition(CLOSEPOSITION);
+                robotState.IntakeClampOpen = false;
+                lastUpdate = System.currentTimeMillis();
+            } else if (!atConePickup) {
+                if ((System.currentTimeMillis() > lastUpdate + WAITTIMETOOPENCLAW) && (Math.round(clampServo.getPosition() * 100) != OPENPOSITION100)) {
+                    clampServo.setPosition(OPENPOSITION);
+                    robotState.IntakeClampOpen = true;
+                }
+
+                int diff = Math.abs(Math.abs(slideMotor.getCurrentPosition()) - lastSlidePosition);
+                if (diff < 10) {
+                    atConePickup = true;
+                    resetState();
                 }
             }
         } else {
@@ -146,6 +194,11 @@ public class Intake2 extends Subsystem {
                                     boolean flipUp, boolean flipDown, boolean autoFoldArmIn,
                                     boolean autoFoldArmOut) {
 
+        if ((slideIn || slideOut || flipDown || flipUp || toggleClamp) &&
+                (robotState.AutoFoldOutArm || robotState.AutoFoldInArm)) {
+            resetState();;
+        }
+
         if (slideIn) {
             robotState.SlideMotorAction = SlideMotorAction.SlideIn;
         } else if (slideOut) {
@@ -172,5 +225,19 @@ public class Intake2 extends Subsystem {
         if (autoFoldArmIn) {
             robotState.AutoFoldInArm = true;
         }
+
+        if (autoFoldArmOut && (lastSlidePosition != 0)) {
+            robotState.AutoFoldOutArm = true;
+        }
+    }
+
+    private void resetState() {
+        slideMotor.setPower(0);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robotState.AutoFoldInArm = false;
+        robotState.AutoFoldOutArm = false;
+        foldingArmInRunning = false;
+        foldingArmOutRunning = false;
+        slidOut = true;
     }
 }
