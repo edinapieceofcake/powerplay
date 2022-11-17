@@ -19,16 +19,16 @@ import edu.edina.library.util.RobotState;
 
 public class Lift2 extends Subsystem {
 
-    private static double CLAWOPENPOSITION = 0.47;
+    private static double CLAWOPENPOSITION = 0.48;
     private static double CLAWCLOSEDPOSITION = 0.55;
 
-    private static double ELBOWINPOSITION = 0.74;
-    private static int ELBOWINPOSITION100 = 74;
+    private static double ELBOWINPOSITION = 0.73;
+    private static int ELBOWINPOSITION100 = 73;
     private static double ELBOWOUTPOSITION = .6;
     private static int ELBOWOUTPOSITION100 = 60;
 
-    private static double LIFTPICKUPPOSITION = .12;
-    private static double LIFTPICKUPPOSITION100 = 12;
+    private static double LIFTPICKUPPOSITION = .14;
+    private static double LIFTPICKUPPOSITION100 = 14;
     private static double LIFTDROPOFFPOSITION = .9;
     private static double LIFTMIDDLEPOSITION = .6;
 
@@ -37,7 +37,7 @@ public class Lift2 extends Subsystem {
     private static int POLEPOSITIONHIGH = -2600;
 
     private static int ARMOUTPOSITION = 200;
-    private static int LIFTRETURNHEiGHT = -170;
+    private static int LIFTRETURNHEiGHT = -135;
 
     private static int ARMFLIPWAITTIME = 750;
     private static int ELBOWINWAITTIME = 750;

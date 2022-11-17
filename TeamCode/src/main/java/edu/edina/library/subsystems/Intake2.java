@@ -12,19 +12,20 @@ import edu.edina.library.util.SlideArmMotorAction;
 import edu.edina.library.util.SlideMotorAction;
 
 public class Intake2 extends Subsystem {
-    public static int TRANSFERSLIDEPOSITION = 570;
-    public static int MIDDLESLIDEPOSITION = 600;
+    public static int TRANSFERSLIDEPOSITION = 630;
+    public static int MIDDLESLIDEPOSITION = 650;
 
-    public static double MAXFLIPPOSITION = .87;
+    public static double MAXFLIPPOSITION = .88;
     public static double MINFLIPPOSITION = .3;
-    public static double TRANSFERPOSITION = .30;
+    public static double TRANSFERPOSITION = .26;
     public static double MIDDLEPOSITION = .45;
     public static double INCREMENTFLIP = .05;
-    public static int INCREMENTTIMEOUT = 25;
+    public static int INCREMENTTIMEOUT = 35;
 
     public static int DROPOFFTIMEOUT = 1000;
 
     public static double CLOSEPOSITION = 0.5;
+    public static double OPENPOSITION = 0.67;
 
     private DcMotorEx slideMotor;
     private Servo clampServo;
@@ -78,15 +79,14 @@ public class Intake2 extends Subsystem {
                 slideMotor.setPower(1);
                 foldingArmInRunning = true;
                 atConeDrop = false;
-                robotState.FlipPosition = MIDDLEPOSITION;
+                robotState.FlipPosition = TRANSFERPOSITION;
                 armFlipServo.setPosition(robotState.FlipPosition);
             } else if (!atConeDrop) {
                 int diff = Math.abs(Math.abs(slideMotor.getCurrentPosition()) - TRANSFERSLIDEPOSITION);
                 if (diff < 10) {
                     atConeDrop = true;
-                    robotState.FlipPosition = TRANSFERPOSITION;
                     armFlipServo.setPosition(robotState.FlipPosition);
-                    clampServo.setPosition(1);
+                    clampServo.setPosition(OPENPOSITION);
                     robotState.IntakeClampOpen = true;
                     droppedOffTime = System.currentTimeMillis();
                     droppedOffCone = false;
@@ -122,7 +122,7 @@ public class Intake2 extends Subsystem {
             }
 
             if (robotState.IntakeClampOpen) {
-                clampServo.setPosition(1);
+                clampServo.setPosition(OPENPOSITION);
             } else {
                 clampServo.setPosition(CLOSEPOSITION);
             }

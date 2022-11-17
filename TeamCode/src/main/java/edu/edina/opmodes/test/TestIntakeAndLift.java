@@ -12,14 +12,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import edu.edina.library.util.Stickygamepad;
 
 @TeleOp
-//@Disabled
+@Disabled
 public class TestIntakeAndLift extends LinearOpMode {
     public static double MAXFLIPPOSITION = 1;
     public static double MINFLIPPOSITION = 0;
     public static double TRANSFERPOSITION = .25;
     public static double MIDDLEPOSITION = .45;
     public static double INCREMENTFLIP = .02;
-    public static int INCREMENTTIMEOUT = 50;
+    public static int INCREMENTTIMEOUT = 35;
 
     private DcMotorEx slideMotor;
     private Servo clampServo;
@@ -70,25 +70,25 @@ public class TestIntakeAndLift extends LinearOpMode {
             pad2.update();
 
             if (pad2.dpad_left) {
-                elbowServo.setPosition(elbowServo.getPosition() + 0.02);
+                elbowServo.setPosition(elbowServo.getPosition() + 0.01);
             }
             if (pad2.dpad_right) {
-                elbowServo.setPosition(elbowServo.getPosition() - 0.02);
+                elbowServo.setPosition(elbowServo.getPosition() - 0.01);
             }
 
             if (pad2.right_bumper) {
-                clawServo.setPosition(clawServo.getPosition() + 0.02);
+                clawServo.setPosition(clawServo.getPosition() + 0.01);
             }
 
             if (pad2.left_bumper) {
-                clawServo.setPosition(clawServo.getPosition() - 0.02);
+                clawServo.setPosition(clawServo.getPosition() - 0.01);
             }
 
             if (pad2.dpad_up) {
-                liftFlipServo.setPosition(liftFlipServo.getPosition() + 0.02);
+                liftFlipServo.setPosition(liftFlipServo.getPosition() + 0.01);
             }
             if (pad2.dpad_down) {
-                liftFlipServo.setPosition(liftFlipServo.getPosition() - 0.02);
+                liftFlipServo.setPosition(liftFlipServo.getPosition() - 0.01);
             }
 
             if (gamepad2.right_trigger != 0) {
@@ -129,11 +129,11 @@ public class TestIntakeAndLift extends LinearOpMode {
             }
 
             if (pad1.dpad_left) {
-                clampServo.setPosition(0);
+                clampServo.setPosition(.5);
             }
 
             if (pad1.dpad_right) {
-                clampServo.setPosition(1);
+                clampServo.setPosition(.75);
             }
 
             telemetry.addData("Slide Position", slideMotor.getCurrentPosition());

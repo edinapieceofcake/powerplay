@@ -23,11 +23,11 @@ package edu.edina.opmodes.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -43,7 +43,8 @@ import java.util.ArrayList;
 import edu.edina.library.vision.AprilTagDetectionPipeline;
 
 @Autonomous
-public class PickMe extends LinearOpMode
+@Disabled
+public class PickMeStack extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -186,22 +187,31 @@ public class PickMe extends LinearOpMode
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         TrajectorySequence trajectory = null;
 
+        trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                .back(27)
+                .build();
+
+        drive.followTrajectorySequence(trajectory);
+
+        drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .strafeRight(20)
+                .build();
+/*
         if (detectionId == 3) {
             trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                    .back(27)
-                    .strafeRight(23)
+                    .strafeRight(3)
                     .build();
         } else if (detectionId == 6) {
             trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                    .back(27)
+                    .strafeLeft(20)
                     .build();
         } else {
             trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
                     .back(28)
-                    .strafeLeft(23)
+                    .strafeLeft(43)
                     .build();
         }
-
+*/
         drive.followTrajectorySequence(trajectory);
 
         while (opModeIsActive()) {sleep(20);}
