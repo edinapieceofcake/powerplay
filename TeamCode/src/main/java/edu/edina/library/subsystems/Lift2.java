@@ -20,8 +20,9 @@ import edu.edina.library.util.RobotState;
 public class Lift2 extends Subsystem {
 
     private static double CLAWOPENPOSITION = 0.48;
-    private static int CLAWOPENPOSITION100 = 48;
     private static double CLAWCLOSEDPOSITION = 0.55;
+    private static double CLAWWIDEOPENPOSITION = 0.45;
+    private static int CLAWWIDEOPENPOSITION100 = 45;
 
     private static double ELBOWINPOSITION = 0.73;
     private static int ELBOWINPOSITION100 = 73;
@@ -102,14 +103,16 @@ public class Lift2 extends Subsystem {
         if (robotState.TargetPoleLocation != PoleLocation.None) {
             if (robotState.TargetPoleLocation == PoleLocation.Return) {
                 if (!runningToPosition) {
-                    clawServo.setPosition(CLAWOPENPOSITION);
+                    clawServo.setPosition(CLAWWIDEOPENPOSITION);
                     robotState.ClawServoPosition = ClawServoPosition.Open;
                     clawOpenStartedTime = System.currentTimeMillis();
                     runningToPosition = true;
                     clawOpen = false;
                 } else if (!clawOpen) {
-                    if ((System.currentTimeMillis() > (clawOpenStartedTime + CLAWOPENWAITTIME)) && (Math.round(clawServo.getPosition() * 100) == CLAWOPENPOSITION100)) {
+                    if ((System.currentTimeMillis() > (clawOpenStartedTime + CLAWOPENWAITTIME)) && (Math.round(clawServo.getPosition() * 100) == CLAWWIDEOPENPOSITION100)) {
                         liftFlipServo.setPosition(LIFTPICKUPPOSITION);
+                        clawServo.setPosition(CLAWOPENPOSITION);
+                        robotState.ClawServoPosition = ClawServoPosition.Open;
                         robotState.LiftFilpServoPosition = LiftFilpServoPosition.Pickup;
                         atPosition = false;
                         returnStartedTime = System.currentTimeMillis();
@@ -258,16 +261,16 @@ public class Lift2 extends Subsystem {
         }
 
         if (lowPole) {
-            resetState();
+            runningToPosition = false;
             robotState.TargetPoleLocation = PoleLocation.Low;
         } else if (mediumPole) {
-            resetState();
+            runningToPosition = false;
             robotState.TargetPoleLocation = PoleLocation.Medium;
         } else if (highPole) {
-            resetState();
+            runningToPosition = false;
             robotState.TargetPoleLocation = PoleLocation.High;
         } else if (returnPosition) {
-            resetState();
+            runningToPosition = false;
             robotState.TargetPoleLocation = PoleLocation.Return;
         }
     }

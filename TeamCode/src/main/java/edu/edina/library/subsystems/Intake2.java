@@ -24,8 +24,8 @@ public class Intake2 extends Subsystem {
     public static int INCREMENTTIMEOUT = 35;
 
     public static int DROPOFFTIMEOUT = 1000;
-    public static int WAITTIMETOOPENCLAW = 250;
-    public static int WAITTIMETOCLOSECLOSE = 350;
+    public static int WAITTIMETOOPENCLAW = 450;
+    public static int WAITTIMETOCLOSECLAW = 550;
 
     public static double CLOSEPOSITION = 0.5;
     public static int CLOSEPOSITION100 = 50;
@@ -91,7 +91,7 @@ public class Intake2 extends Subsystem {
                 robotState.IntakeClampOpen = false;
                 droppedOffTime = System.currentTimeMillis();
             } else if (!clawClosed) {
-                if ((System.currentTimeMillis() > lastUpdate + WAITTIMETOCLOSECLOSE) && (Math.round(clampServo.getPosition() * 100) == CLOSEPOSITION100)) {
+                if ((System.currentTimeMillis() > lastUpdate + WAITTIMETOCLOSECLAW) && (Math.round(clampServo.getPosition() * 100) == CLOSEPOSITION100)) {
                     lastSlidePosition = slideMotor.getCurrentPosition();
                     slideMotor.setTargetPosition(MIDDLESLIDEPOSITION);
                     slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
