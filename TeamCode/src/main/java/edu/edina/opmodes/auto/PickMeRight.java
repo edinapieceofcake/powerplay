@@ -43,13 +43,23 @@ import java.util.ArrayList;
 import edu.edina.library.vision.AprilTagDetectionPipeline;
 
 @Autonomous
-@Disabled
-public class PickMeStack extends LinearOpMode
+//@Disabled
+public class PickMeRight extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
+
+    private static int POLEPOSITIONLOW = -1008;
+    private static int POLEPOSITIONMIDDLE = -1900;
+    private static int POLEPOSITIONHIGH = -2600;
+
+    private static double LIFTDROPOFFPOSITION = .9;
+    private static double LIFTMIDDLEPOSITION = .6;
+
+    private static double CLAWWIDEOPENPOSITION = 0.45;
+    private static double CLAWCLOSEDPOSITION = 0.55;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -108,12 +118,36 @@ public class PickMeStack extends LinearOpMode
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        clawServo.setPosition(.55);
+        clawServo.setPosition(CLAWCLOSEDPOSITION);
         elbowServo.setPosition(.6);
         liftFlipServo.setPosition(.6);
         clampServo.setPosition(.5);
         armFlipServo.setPosition(.45);
         colorSensor.enableLed(false);
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        TrajectorySequence trajectory = null;
+
+        trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                .back(28)
+                .strafeLeft(9)
+                .build();
+
+        TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .forward(2)
+                .strafeRight(33)
+                .build();
+
+        TrajectorySequence trajectory2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .forward(2)
+                .strafeRight(8)
+                .build();
+
+        TrajectorySequence trajectory3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .forward(2)
+                .strafeLeft(15)
+                .build();
+
 
         /*
          * The INIT-loop:
@@ -184,35 +218,33 @@ public class PickMeStack extends LinearOpMode
             }
         });
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        TrajectorySequence trajectory = null;
-
-        trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                .back(27)
-                .build();
-
         drive.followTrajectorySequence(trajectory);
 
-        drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                .strafeRight(20)
-                .build();
-/*
+        liftMotor.setTargetPosition(POLEPOSITIONLOW);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(1);
+
+        sleep(1000);
+        liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
+        sleep(500);
+        clawServo.setPosition(CLAWWIDEOPENPOSITION);
+        sleep(750);
+
+        clawServo.setPosition(CLAWCLOSEDPOSITION);
+        liftFlipServo.setPosition(LIFTMIDDLEPOSITION);
+        sleep(750);
+        liftMotor.setTargetPosition(0);
+
+        telemetry.addData("Pose", drive.getPoseEstimate());
+        telemetry.update();
+
         if (detectionId == 3) {
-            trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                    .strafeRight(3)
-                    .build();
+            drive.followTrajectorySequence(trajectory1);
         } else if (detectionId == 6) {
-            trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                    .strafeLeft(20)
-                    .build();
+            drive.followTrajectorySequence(trajectory2);
         } else {
-            trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
-                    .back(28)
-                    .strafeLeft(43)
-                    .build();
+            drive.followTrajectorySequence(trajectory3);
         }
-*/
-        drive.followTrajectorySequence(trajectory);
 
         while (opModeIsActive()) {sleep(20);}
     }
