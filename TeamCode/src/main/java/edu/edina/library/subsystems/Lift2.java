@@ -165,6 +165,8 @@ public class Lift2 extends Subsystem {
                     if ((Math.abs(liftMotor.getCurrentPosition()) > ARMOUTPOSITION) && (Math.round(elbowServo.getPosition() * 100) != ELBOWOUTPOSITION100)) {
                         elbowServo.setPosition(ELBOWOUTPOSITION);
                         robotState.ElbowServoPosition = ElbowServoPosition.Out;
+                        liftFlipServo.setPosition(LIFTMIDDLEPOSITION);
+                        robotState.LiftFilpServoPosition = LiftFilpServoPosition.Middle;
                     }
 
                     if (robotState.LiftDiff < 10) {
@@ -180,6 +182,12 @@ public class Lift2 extends Subsystem {
                         clawServo.setPosition(CLAWOPENPOSITION);
                     } else if (robotState.ClawServoPosition == ClawServoPosition.Closed) {
                         clawServo.setPosition(CLAWCLOSEDPOSITION);
+                    }
+
+                    if (robotState.LiftFilpServoPosition == LiftFilpServoPosition.Pickup) {
+                        liftFlipServo.setPosition(LIFTPICKUPPOSITION);
+                    } else if (robotState.LiftFilpServoPosition == LiftFilpServoPosition.DropOff) {
+                        liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
                     }
                 }
             }

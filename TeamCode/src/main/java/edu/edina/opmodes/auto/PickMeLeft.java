@@ -135,7 +135,7 @@ public class PickMeLeft extends LinearOpMode
         TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .strafeRight(9)
                 .forward(26)
-                .strafeRight(23)
+                .strafeRight(24)
                 .build();
 
         TrajectorySequence trajectory2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -146,7 +146,7 @@ public class PickMeLeft extends LinearOpMode
         TrajectorySequence trajectory3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .strafeRight(9)
                 .forward(26)
-                .strafeLeft(23)
+                .strafeLeft(24)
                 .build();
 
 
@@ -219,13 +219,16 @@ public class PickMeLeft extends LinearOpMode
             }
         });
 
+        telemetry.addData("detectionId", detectionId);
+        telemetry.update();
+
         drive.followTrajectorySequence(trajectory);
 
-        liftMotor.setTargetPosition(POLEPOSITIONMIDDLE);
+        liftMotor.setTargetPosition(POLEPOSITIONHIGH);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setPower(1);
 
-        sleep(1000);
+        sleep(2000);
         liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
         sleep(500);
         clawServo.setPosition(CLAWWIDEOPENPOSITION);
@@ -235,9 +238,6 @@ public class PickMeLeft extends LinearOpMode
         liftFlipServo.setPosition(LIFTMIDDLEPOSITION);
         sleep(750);
         liftMotor.setTargetPosition(0);
-
-        telemetry.addData("Pose", drive.getPoseEstimate());
-        telemetry.update();
 
         if (detectionId == 3) {
             drive.followTrajectorySequence(trajectory1);

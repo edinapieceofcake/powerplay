@@ -23,7 +23,6 @@ package edu.edina.opmodes.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -130,22 +129,23 @@ public class PickMeRight extends LinearOpMode
 
         trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
                 .back(28)
-                .strafeLeft(9)
+                .strafeRight(16)
                 .build();
 
         TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .forward(2)
-                .strafeRight(33)
+                .strafeRight(8)
                 .build();
 
         TrajectorySequence trajectory2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .forward(2)
-                .strafeRight(8)
+                .strafeLeft(17)
                 .build();
 
         TrajectorySequence trajectory3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .forward(2)
-                .strafeLeft(15)
+                .strafeLeft(40)
+                .back(2)
                 .build();
 
 
@@ -218,13 +218,16 @@ public class PickMeRight extends LinearOpMode
             }
         });
 
+        telemetry.addData("detectionId", detectionId);
+        telemetry.update();
+
         drive.followTrajectorySequence(trajectory);
 
-        liftMotor.setTargetPosition(POLEPOSITIONLOW);
+        liftMotor.setTargetPosition(POLEPOSITIONMIDDLE);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setPower(1);
 
-        sleep(1000);
+        sleep(2000);
         liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
         sleep(500);
         clawServo.setPosition(CLAWWIDEOPENPOSITION);
@@ -234,9 +237,6 @@ public class PickMeRight extends LinearOpMode
         liftFlipServo.setPosition(LIFTMIDDLEPOSITION);
         sleep(750);
         liftMotor.setTargetPosition(0);
-
-        telemetry.addData("Pose", drive.getPoseEstimate());
-        telemetry.update();
 
         if (detectionId == 3) {
             drive.followTrajectorySequence(trajectory1);

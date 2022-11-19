@@ -92,7 +92,11 @@ public class Intake2 extends Subsystem {
                 droppedOffTime = System.currentTimeMillis();
             } else if (!clawClosed) {
                 if ((System.currentTimeMillis() > lastUpdate + WAITTIMETOCLOSECLAW) && (Math.round(clampServo.getPosition() * 100) == CLOSEPOSITION100)) {
-                    lastSlidePosition = slideMotor.getCurrentPosition();
+                    lastSlidePosition = slideMotor.getCurrentPosition() - 1000;
+                    if (lastSlidePosition < 600) {
+                        lastSlidePosition = 600;
+                    }
+
                     slideMotor.setTargetPosition(MIDDLESLIDEPOSITION);
                     slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     slideMotor.setPower(1);
