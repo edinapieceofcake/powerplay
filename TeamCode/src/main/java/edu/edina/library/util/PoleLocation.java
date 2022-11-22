@@ -4,5 +4,6 @@ public enum PoleLocation {
     Low,
     Medium,
     High,
+    Return,
     None
 }

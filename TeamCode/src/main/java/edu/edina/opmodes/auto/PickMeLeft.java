@@ -19,13 +19,19 @@
  * SOFTWARE.
  */
 
-package edu.edina.opmodes.test;
+package edu.edina.opmodes.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -35,14 +41,24 @@ import java.util.ArrayList;
 
 import edu.edina.library.vision.AprilTagDetectionPipeline;
 
-@TeleOp
-@Disabled
-public class AprilTagDemo extends LinearOpMode
+@Autonomous
+//@Disabled
+public class PickMeLeft extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
+
+    private static int POLEPOSITIONLOW = -1008;
+    private static int POLEPOSITIONMIDDLE = -1900;
+    private static int POLEPOSITIONHIGH = -2600;
+
+    private static double LIFTDROPOFFPOSITION = .9;
+    private static double LIFTMIDDLEPOSITION = .6;
+
+    private static double CLAWWIDEOPENPOSITION = 0.45;
+    private static double CLAWCLOSEDPOSITION = 0.55;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -55,6 +71,7 @@ public class AprilTagDemo extends LinearOpMode
 
     // UNITS ARE METERS
     double tagsize = 0.166;
+    int detectionId = 6; // middle
 
     int numFramesWithoutDetection = 0;
 
@@ -86,11 +103,59 @@ public class AprilTagDemo extends LinearOpMode
             }
         });
 
-        waitForStart();
-
         telemetry.setMsTransmissionInterval(50);
 
-        while (opModeIsActive())
+        DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        Servo liftFlipServo = hardwareMap.get(Servo.class, "liftFlipServo");
+        Servo elbowServo = hardwareMap.get(Servo.class, "elbowServo");
+        Servo clawServo = hardwareMap.get(Servo.class, "clawServo");
+        Servo clampServo = hardwareMap.get(Servo.class, "clampServo");
+        Servo armFlipServo = hardwareMap.get(Servo.class, "armFlipServo");
+        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
+
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        clawServo.setPosition(CLAWCLOSEDPOSITION);
+        elbowServo.setPosition(.6);
+        liftFlipServo.setPosition(.6);
+        clampServo.setPosition(.5);
+        armFlipServo.setPosition(.45);
+        colorSensor.enableLed(false);
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        TrajectorySequence trajectory = null;
+
+        trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                .back(52)
+                .strafeLeft(9)
+                .build();
+
+        TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .strafeRight(9)
+                .forward(26)
+                .strafeRight(24)
+                .build();
+
+        TrajectorySequence trajectory2 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .strafeRight(9)
+                .forward(26)
+                .build();
+
+        TrajectorySequence trajectory3 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .strafeRight(9)
+                .forward(26)
+                .strafeLeft(24)
+                .back(2)
+                .build();
+
+
+        /*
+         * The INIT-loop:
+         * This REPLACES waitForStart!
+         */
+        while (!isStarted() && !isStopRequested())
         {
             // Calling getDetectionsUpdate() will only return an object if there was a new frame
             // processed since the last time we called it. Otherwise, it will return null. This
@@ -131,6 +196,7 @@ public class AprilTagDemo extends LinearOpMode
 
                     for(AprilTagDetection detection : detections)
                     {
+                        detectionId = detection.id;
                         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
                         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
                         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
@@ -146,5 +212,42 @@ public class AprilTagDemo extends LinearOpMode
 
             sleep(20);
         }
+
+        camera.closeCameraDeviceAsync(new OpenCvCamera.AsyncCameraCloseListener() {
+            @Override
+            public void onClose() {
+
+            }
+        });
+
+        telemetry.addData("detectionId", detectionId);
+        telemetry.update();
+
+        drive.followTrajectorySequence(trajectory);
+
+        liftMotor.setTargetPosition(POLEPOSITIONHIGH);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(1);
+
+        sleep(2000);
+        liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
+        sleep(500);
+        clawServo.setPosition(CLAWWIDEOPENPOSITION);
+        sleep(750);
+
+        clawServo.setPosition(CLAWCLOSEDPOSITION);
+        liftFlipServo.setPosition(LIFTMIDDLEPOSITION);
+        sleep(750);
+        liftMotor.setTargetPosition(0);
+
+        if (detectionId == 3) {
+            drive.followTrajectorySequence(trajectory1);
+        } else if (detectionId == 6) {
+            drive.followTrajectorySequence(trajectory2);
+        } else {
+            drive.followTrajectorySequence(trajectory3);
+        }
+
+        while (opModeIsActive()) {sleep(20);}
     }
 }
