@@ -147,6 +147,7 @@ public class PickMeLeft extends LinearOpMode
                 .strafeRight(9)
                 .forward(26)
                 .strafeLeft(24)
+                .back(2)
                 .build();
 
 
