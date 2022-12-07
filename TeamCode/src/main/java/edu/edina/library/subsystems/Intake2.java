@@ -13,7 +13,7 @@ import edu.edina.library.util.SlideArmMotorAction;
 import edu.edina.library.util.SlideMotorAction;
 
 public class Intake2 extends Subsystem {
-    public static int TRANSFERSLIDEPOSITION = 630;
+    public static int TRANSFERSLIDEPOSITION = 600;
     public static int MIDDLESLIDEPOSITION = 650;
 
     public static double MAXFLIPPOSITION = .88;

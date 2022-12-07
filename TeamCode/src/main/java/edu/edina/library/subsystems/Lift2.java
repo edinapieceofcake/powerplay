@@ -19,7 +19,7 @@ import edu.edina.library.util.RobotState;
 
 public class Lift2 extends Subsystem {
 
-    private static double CLAWOPENPOSITION = 0.48;
+    private static double CLAWOPENPOSITION = 0.49;
     private static double CLAWCLOSEDPOSITION = 0.55;
     private static double CLAWWIDEOPENPOSITION = 0.45;
     private static int CLAWWIDEOPENPOSITION100 = 45;
@@ -28,10 +28,13 @@ public class Lift2 extends Subsystem {
     private static int ELBOWINPOSITION100 = 73;
     private static double ELBOWOUTPOSITION = .6;
     private static int ELBOWOUTPOSITION100 = 60;
+    private static double ELBOWLEFTOUTPOSITION = .32;
+    private static int ELBOWOUTLEFTPOSITION100 = 32;
 
-    private static double LIFTPICKUPPOSITION = .14;
-    private static double LIFTPICKUPPOSITION100 = 14;
+    private static double LIFTPICKUPPOSITION = .21;
+    private static double LIFTPICKUPPOSITION100 = 21;
     private static double LIFTDROPOFFPOSITION = .9;
+    private static double LIFTDROPOFFPOSITION100 = 90;
     private static double LIFTMIDDLEPOSITION = .6;
 
     private static int POLEPOSITIONLOW = -1008;
@@ -39,10 +42,10 @@ public class Lift2 extends Subsystem {
     private static int POLEPOSITIONHIGH = -2600;
 
     private static int ARMOUTPOSITION = 200;
-    private static int LIFTRETURNHEiGHT = -135;
+    private static int LIFTRETURNHEiGHT = -100;
 
-    private static int ARMFLIPWAITTIME = 750;
-    private static int ELBOWINWAITTIME = 750;
+    private static int ARMFLIPWAITTIME = 1000;
+    private static int ELBOWOUTWAITTIME = 250;
     private static int CLAWOPENWAITTIME = 500;
 
     private DcMotorEx liftMotor;
@@ -110,29 +113,31 @@ public class Lift2 extends Subsystem {
                     clawOpen = false;
                 } else if (!clawOpen) {
                     if ((System.currentTimeMillis() > (clawOpenStartedTime + CLAWOPENWAITTIME)) && (Math.round(clawServo.getPosition() * 100) == CLAWWIDEOPENPOSITION100)) {
-                        liftFlipServo.setPosition(LIFTPICKUPPOSITION);
+                        elbowServo.setPosition(ELBOWOUTPOSITION);
+                        robotState.ElbowServoPosition = ElbowServoPosition.Out;
                         clawServo.setPosition(CLAWOPENPOSITION);
                         robotState.ClawServoPosition = ClawServoPosition.Open;
-                        robotState.LiftFilpServoPosition = LiftFilpServoPosition.Pickup;
                         atPosition = false;
                         returnStartedTime = System.currentTimeMillis();
                         clawOpen = true;
                     }
                 } else if (!atPosition) {
-                    if ((System.currentTimeMillis() > (returnStartedTime + ARMFLIPWAITTIME)) && (Math.round(liftFlipServo.getPosition() * 100) == LIFTPICKUPPOSITION100)) {
+                    if ((System.currentTimeMillis() > (returnStartedTime + ELBOWOUTWAITTIME)) && (Math.round(elbowServo.getPosition() * 100) == ELBOWOUTPOSITION100)) {
+                        liftFlipServo.setPosition(LIFTPICKUPPOSITION);
+                        robotState.LiftFilpServoPosition = LiftFilpServoPosition.Pickup;
                         atPosition = true;
-                        elbowServo.setPosition(ELBOWINPOSITION);
-                        robotState.ElbowServoPosition = ElbowServoPosition.In;
                         armReady = false;
                         returnStartedTime = System.currentTimeMillis();
                     }
                 } else if (!armReady) {
-                    if ((System.currentTimeMillis() > (returnStartedTime + ELBOWINWAITTIME)) && (Math.round(elbowServo.getPosition() * 100) == ELBOWINPOSITION100)) {
+                    if ((System.currentTimeMillis() > (returnStartedTime + ARMFLIPWAITTIME)) && (Math.round(liftFlipServo.getPosition() * 100) == LIFTPICKUPPOSITION100)) {
+                        elbowServo.setPosition(ELBOWINPOSITION);
+                        robotState.ElbowServoPosition = ElbowServoPosition.In;
+                        atZeroPosition = false;
+                        armReady = true;
                         liftMotor.setTargetPosition(LIFTRETURNHEiGHT);
                         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         liftMotor.setPower(1);
-                        atZeroPosition = false;
-                        armReady = true;
                     }
                 } else if (!atZeroPosition) {
                     robotState.LiftDiff = Math.abs(liftMotor.getCurrentPosition());
@@ -165,8 +170,8 @@ public class Lift2 extends Subsystem {
                     if ((Math.abs(liftMotor.getCurrentPosition()) > ARMOUTPOSITION) && (Math.round(elbowServo.getPosition() * 100) != ELBOWOUTPOSITION100)) {
                         elbowServo.setPosition(ELBOWOUTPOSITION);
                         robotState.ElbowServoPosition = ElbowServoPosition.Out;
-                        liftFlipServo.setPosition(LIFTMIDDLEPOSITION);
-                        robotState.LiftFilpServoPosition = LiftFilpServoPosition.Middle;
+                        liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
+                        robotState.LiftFilpServoPosition = LiftFilpServoPosition.DropOff;
                     }
 
                     if (robotState.LiftDiff < 10) {
@@ -176,6 +181,8 @@ public class Lift2 extends Subsystem {
                 } else if (!armReady) {
                     liftFlipServo.setPosition(LIFTDROPOFFPOSITION);
                     robotState.LiftFilpServoPosition = LiftFilpServoPosition.DropOff;
+                    elbowServo.setPosition(ELBOWLEFTOUTPOSITION);
+                    robotState.ElbowServoPosition = ElbowServoPosition.LeftOut;
                     armReady = true;
                 } else {
                     if (robotState.ClawServoPosition == ClawServoPosition.Open) {
@@ -202,6 +209,8 @@ public class Lift2 extends Subsystem {
                 elbowServo.setPosition(ELBOWINPOSITION);
             } else if (robotState.ElbowServoPosition == ElbowServoPosition.Out) {
                 elbowServo.setPosition(ELBOWOUTPOSITION);
+            } else if (robotState.ElbowServoPosition == ElbowServoPosition.LeftOut) {
+                elbowServo.setPosition(ELBOWLEFTOUTPOSITION);
             }
 
             if (robotState.LiftFilpServoPosition == LiftFilpServoPosition.Pickup) {
