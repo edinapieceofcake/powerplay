@@ -38,7 +38,7 @@ public class Lift2 extends Subsystem {
     private static double LIFTMIDDLEPOSITION = .64;
 
     private static int POLEPOSITIONLOW = -1008;
-    private static int POLEPOSITIONMIDDLE = -1900;
+    private static int POLEPOSITIONMIDDLE = -1830;
     private static int POLEPOSITIONHIGH = -2600;
 
     private static int ARMOUTPOSITION = 200;
@@ -74,6 +74,7 @@ public class Lift2 extends Subsystem {
             elbowServo = map.get(Servo.class, "elbowServo");
             clawServo = map.get(Servo.class, "clawServo");
             liftSwitch = map.get(DigitalChannel.class, "liftSwitch");
+            robotState.Lift = liftMotor;
 
             // set the digital channel to input.
             liftSwitch.setMode(DigitalChannel.Mode.INPUT);

@@ -57,7 +57,7 @@ public class PickMeRight extends LinearOpMode
     private static double LIFTDROPOFFPOSITION = .96;
     private static double LIFTMIDDLEPOSITION = .64;
 
-    private static double CLAWWIDEOPENPOSITION = 0.45;
+    private static double CLAWWIDEOPENPOSITION = 0.56;
     private static double CLAWCLOSEDPOSITION = 0.55;
 
     // Lens intrinsics
