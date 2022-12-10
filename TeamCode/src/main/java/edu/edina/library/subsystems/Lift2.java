@@ -33,9 +33,9 @@ public class Lift2 extends Subsystem {
 
     private static double LIFTPICKUPPOSITION = .21;
     private static double LIFTPICKUPPOSITION100 = 21;
-    private static double LIFTDROPOFFPOSITION = .9;
-    private static double LIFTDROPOFFPOSITION100 = 90;
-    private static double LIFTMIDDLEPOSITION = .6;
+    private static double LIFTDROPOFFPOSITION = .96;
+    private static double LIFTDROPOFFPOSITION100 = 96;
+    private static double LIFTMIDDLEPOSITION = .64;
 
     private static int POLEPOSITIONLOW = -1008;
     private static int POLEPOSITIONMIDDLE = -1900;

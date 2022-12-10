@@ -54,8 +54,8 @@ public class PickMeRight extends LinearOpMode
     private static int POLEPOSITIONMIDDLE = -1900;
     private static int POLEPOSITIONHIGH = -2600;
 
-    private static double LIFTDROPOFFPOSITION = .9;
-    private static double LIFTMIDDLEPOSITION = .6;
+    private static double LIFTDROPOFFPOSITION = .96;
+    private static double LIFTMIDDLEPOSITION = .64;
 
     private static double CLAWWIDEOPENPOSITION = 0.45;
     private static double CLAWCLOSEDPOSITION = 0.55;
