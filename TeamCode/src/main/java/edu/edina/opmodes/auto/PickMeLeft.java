@@ -57,7 +57,7 @@ public class PickMeLeft extends LinearOpMode
     private static double LIFTDROPOFFPOSITION = .96;
     private static double LIFTMIDDLEPOSITION = .64;
 
-    private static double CLAWWIDEOPENPOSITION = 0.56;
+    private static double CLAWWIDEOPENPOSITION = 0.47;
     private static double CLAWCLOSEDPOSITION = 0.55;
 
     // Lens intrinsics
@@ -121,7 +121,7 @@ public class PickMeLeft extends LinearOpMode
         elbowServo.setPosition(.6);
         liftFlipServo.setPosition(.6);
         clampServo.setPosition(.5);
-        armFlipServo.setPosition(.45);
+        armFlipServo.setPosition(.56);
         colorSensor.enableLed(false);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -129,7 +129,7 @@ public class PickMeLeft extends LinearOpMode
 
         trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
                 .back(52)
-                .strafeLeft(9)
+                .strafeLeft(8)
                 .build();
 
         TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
