@@ -1,5 +1,7 @@
 package edu.edina.library.util;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class RobotState {
@@ -26,6 +28,7 @@ public class RobotState {
     public double LiftFlipPosition = 0.0;
     public boolean LiftSwitch = false;
     public boolean LiftReadyForCone = false;
+    public DcMotorEx Lift;
 
     public boolean IntakeSuccessfullySetup = false;
     public boolean LiftSuccessfullySetup = false;
@@ -52,6 +55,7 @@ public class RobotState {
             telemetry.addData("LiftDiff", LiftDiff);
             telemetry.addData("LiftSwitch", LiftSwitch);
             telemetry.addData("LiftReadyForCone", LiftReadyForCone);
+            telemetry.addData("lift Power", Lift.getPower());
         } else {
             telemetry.addData("Unable to setup motors liftMotor or setup servos armServo or latchServo", "");
         }

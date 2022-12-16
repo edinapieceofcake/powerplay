@@ -75,7 +75,7 @@ public class PickMeColor extends LinearOpMode
         elbowServo.setPosition(.6);
         liftFlipServo.setPosition(.6);
         clampServo.setPosition(.5);
-        armFlipServo.setPosition(.45);
+        armFlipServo.setPosition(.56);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);

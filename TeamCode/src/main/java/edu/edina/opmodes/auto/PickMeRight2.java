@@ -23,6 +23,7 @@ package edu.edina.opmodes.auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -42,8 +43,8 @@ import java.util.ArrayList;
 import edu.edina.library.vision.AprilTagDetectionPipeline;
 
 @Autonomous
-//@Disabled
-public class PickMeRight extends LinearOpMode
+@Disabled
+public class PickMeRight2 extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -54,11 +55,32 @@ public class PickMeRight extends LinearOpMode
     private static int POLEPOSITIONMIDDLE = -1900;
     private static int POLEPOSITIONHIGH = -2600;
 
-    private static double LIFTDROPOFFPOSITION = .96;
-    private static double LIFTMIDDLEPOSITION = .64;
+    public static double TRANSFERPOSITION = .26;
+    public static double MIDDLEPOSITION = .45;
+    private static double CONE5ARMFLIPSERVO = 0.70;
 
-    private static double CLAWWIDEOPENPOSITION = 0.47;
+    private static double CLAWOPENPOSITION = 0.48;
     private static double CLAWCLOSEDPOSITION = 0.55;
+    private static double CLAWWIDEOPENPOSITION = 0.45;
+    private static int CLAWWIDEOPENPOSITION100 = 45;
+
+    private static double ELBOWINPOSITION = 0.73;
+    private static int ELBOWINPOSITION100 = 73;
+    private static double ELBOWOUTPOSITION = .6;
+    private static int ELBOWOUTPOSITION100 = 60;
+
+    private static double LIFTPICKUPPOSITION = .14;
+    private static double LIFTPICKUPPOSITION100 = 14;
+    private static double LIFTDROPOFFPOSITION = .9;
+    private static double LIFTMIDDLEPOSITION = .6;
+
+    private static int CONEPICKUPPOSITION = 1340;
+    private static int TRANSFERSLIDEPOSITION = 630;
+    public static int MIDDLESLIDEPOSITION = 800;
+    private static int LIFTRETURNHEiGHT = -135;
+
+    private static double CLAMPCLOSEPOSITION = 0.5;
+    private static double CLAMPOPENPOSITION = 0.67;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -106,6 +128,7 @@ public class PickMeRight extends LinearOpMode
         telemetry.setMsTransmissionInterval(50);
 
         DcMotorEx liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        DcMotorEx slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
         Servo liftFlipServo = hardwareMap.get(Servo.class, "liftFlipServo");
         Servo elbowServo = hardwareMap.get(Servo.class, "elbowServo");
         Servo clawServo = hardwareMap.get(Servo.class, "clawServo");
@@ -117,11 +140,15 @@ public class PickMeRight extends LinearOpMode
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         clawServo.setPosition(CLAWCLOSEDPOSITION);
         elbowServo.setPosition(.6);
         liftFlipServo.setPosition(.6);
-        clampServo.setPosition(.5);
-        armFlipServo.setPosition(.56);
+        clampServo.setPosition(CLAMPCLOSEPOSITION);
+        armFlipServo.setPosition(MIDDLEPOSITION);
         colorSensor.enableLed(false);
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -129,7 +156,7 @@ public class PickMeRight extends LinearOpMode
 
         trajectory = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
                 .back(28)
-                .strafeRight(15)
+                .strafeRight(16)
                 .build();
 
         TrajectorySequence trajectory1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
@@ -221,6 +248,40 @@ public class PickMeRight extends LinearOpMode
         telemetry.addData("detectionId", detectionId);
         telemetry.update();
 
+        liftMotor.setTargetPosition(LIFTRETURNHEiGHT);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(1);
+
+        armFlipServo.setPosition(CONE5ARMFLIPSERVO);
+        sleep(20);
+        slideMotor.setTargetPosition(CONEPICKUPPOSITION);
+        slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(1);
+
+        clampServo.setPosition(CLAMPOPENPOSITION);
+
+        liftFlipServo.setPosition(LIFTPICKUPPOSITION);
+        sleep(200);
+        clawServo.setPosition(CLAWOPENPOSITION);
+        sleep(50);
+        elbowServo.setPosition(ELBOWINPOSITION);
+
+        sleep(1000);
+        clampServo.setPosition(CLAMPCLOSEPOSITION);
+        sleep(500);
+        armFlipServo.setPosition(.45);
+
+        slideMotor.setTargetPosition(TRANSFERSLIDEPOSITION);
+        sleep(1500);
+        armFlipServo.setPosition(TRANSFERPOSITION);
+        sleep(1500);
+        clampServo.setPosition(CLAMPOPENPOSITION);
+        sleep(1000);
+        slideMotor.setTargetPosition(MIDDLESLIDEPOSITION);
+        sleep(1500);
+        clampServo.setPosition(CLAMPCLOSEPOSITION);
+        sleep(3000);
+/*
         drive.followTrajectorySequence(trajectory);
 
         liftMotor.setTargetPosition(POLEPOSITIONMIDDLE);
@@ -247,5 +308,6 @@ public class PickMeRight extends LinearOpMode
         }
 
         while (opModeIsActive()) {sleep(20);}
+ */
     }
 }
